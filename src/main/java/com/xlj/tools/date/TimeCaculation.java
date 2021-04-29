@@ -46,20 +46,13 @@ public class TimeCaculation {
         Date endTime = new SimpleDateFormat("yyyy-MM-dd").parse(end);
 
         long second = (endTime.getTime() - startTime.getTime()) / 1000;
-//        System.out.println(second + " 秒");
         long minute = second / 60;
-//        System.out.println(minute + " 分钟");
         long hour = minute / 60;
-//        System.out.println(hour + " 小时");
         long allDay = hour / 24;
-//        System.out.println(allDay + " 天");
         long year = allDay / 365;
         long overDay = allDay - year * 365;
-//        System.out.println(year + " 年");
         long mouth = overDay / 30;
-//        System.out.println(mouth + " 月");
         long day = overDay - mouth * 30;
-//        System.out.println(day + " 天");
         System.out.println(year + "年 " + mouth + "月 " + day + "天 ");
         System.out.println("总天数：" + allDay);
         System.out.println("总小时：" + hour);
