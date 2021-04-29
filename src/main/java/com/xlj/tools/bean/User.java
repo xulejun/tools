@@ -1,7 +1,11 @@
 package com.xlj.tools.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @author xlj
@@ -9,7 +13,10 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class User {
+@AllArgsConstructor
+@NoArgsConstructor
+public class User implements Serializable {
+    private static final long serialVersionUID = 9103586308258411468L;
     private Integer id;
     private String name;
 }
