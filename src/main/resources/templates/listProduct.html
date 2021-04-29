@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>商品展示</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+
+<style type="text/css">
+    .tableborder {
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        /*以上分别设置的是表格边框中上右下左的边框宽度*/
+        border-top-style: solid;
+        border-right-style: solid;
+        border-bottom-style: solid;
+        border-left-style: solid;
+        /*设置边框的表现样式，solid为实线*/
+        border-top-color: #0000FF;
+        border-right-color: #0000FF;
+        border-bottom-color: #0000FF;
+        border-left-color: #0000FF;
+        /*设置边框的颜色*/
+    }
+</style>
+
+<body>
+<table width="300" height="100" border="0" align="center" cellpadding="0" cellspacing="0" class="tableborder">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>产品名称</th>
+        <th>价格</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p: ${ps}">
+        <td th:text="${p.id}"></td>
+        <td th:text="${p.name}"></td>
+        <td th:text="${p.price}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+
+

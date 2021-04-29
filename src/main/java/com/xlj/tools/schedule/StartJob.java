@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Configuration
-@EnableScheduling
+//@EnableScheduling
 public class StartJob {
     Integer i = 0;
 
