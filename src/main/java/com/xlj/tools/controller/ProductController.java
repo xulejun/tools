@@ -7,6 +7,7 @@ import com.xlj.tools.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,14 @@ public class ProductController {
         return "hello";
     }
 
+    /**
+     * 分页查询商品
+     *
+     * @param model
+     * @param start
+     * @param size
+     * @return
+     */
     @GetMapping("/listProduct")
     public String listProduct(Model model, @RequestParam(value = "start", defaultValue = "0") int start,
                               @RequestParam(value = "size", defaultValue = "5") int size) {
@@ -39,9 +48,53 @@ public class ProductController {
         return "listProduct";
     }
 
+    /**
+     * 新增商品
+     *
+     * @param product
+     * @return
+     */
     @PostMapping("/addProduct")
     public String addProduct(Product product) {
         productService.insert(product);
+        return "redirect:listProduct";
+    }
+
+    /**
+     * 删除商品
+     *
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/deleteProduct")
+    public String deleteProduct(@RequestParam(value = "id") int id) {
+        productService.deleteByPrimaryKey(id);
+        return "redirect:listProduct";
+    }
+
+    /**
+     * 根据id查询商品
+     *
+     * @param id
+     * @param model
+     * @return
+     */
+    @GetMapping("/editProduct")
+    public String deleteProduct(@RequestParam(value = "id") int id, Model model) {
+        Product product = productService.selectByPrimaryKey(id);
+        model.addAttribute("p", product);
+        return "editProduct";
+    }
+
+    /**
+     * 更新商品
+     *
+     * @param product
+     * @return
+     */
+    @PostMapping("updateProduct")
+    public String updateProduct(Product product) {
+        productService.updateByPrimaryKeySelective(product);
         return "redirect:listProduct";
     }
 }

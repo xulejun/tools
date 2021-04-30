@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>编辑商品</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div style="margin:0px auto; width:500px" align="center">
+
+    <form action="updateCategory" method="post">
+        商品名称: <input name="name" th:value="${p.name}"/> <br/>
+        商品价格: <input name="name" th:value="${p.price}"/> <br/>
+        <input name="id" type="hidden" th:value="${p.id}"/>
+        <br>
+        <button type="submit">提交</button>
+    </form>
+
+</div>
+</body>
