@@ -92,7 +92,7 @@ public class ProductController {
      * @param product
      * @return
      */
-    @PostMapping("updateProduct")
+    @PostMapping("/updateProduct")
     public String updateProduct(Product product) {
         productService.updateByPrimaryKeySelective(product);
         return "redirect:listProduct";
