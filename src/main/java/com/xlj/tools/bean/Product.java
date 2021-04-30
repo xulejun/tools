@@ -1,7 +1,9 @@
 package com.xlj.tools.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 商品
@@ -11,6 +13,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
     private Integer id;
     private String name;
