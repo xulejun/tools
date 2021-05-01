@@ -34,8 +34,9 @@ public class FileController {
         // 随机文件名
         String randomString = RandomUtil.randomString(10);
         String fileName = randomString.concat(".jpg");
+        String suffixPath = "\\src\\main\\resources\\img";
         // 文件上传路径
-        String filePath = "D:\\XLJ\\Idea-workspace\\tools\\src\\main\\resources\\img";
+        String filePath = new File("").getAbsolutePath().concat(suffixPath);
         File newFile = new File(filePath, fileName);
         newFile.getParentFile().mkdir();
         // 文件上传
