@@ -16,6 +16,7 @@ public class TimeCaculation {
     public static void main(String[] args) throws ParseException {
         weTogether();
 
+        System.out.println("请输入起始时间：");
         Scanner scanner = new Scanner(System.in);
         String start = scanner.next();
 
@@ -53,6 +54,7 @@ public class TimeCaculation {
         long overDay = allDay - year * 365;
         long mouth = overDay / 30;
         long day = overDay - mouth * 30;
+        System.out.println(start + " 距离现在已经过去了：");
         System.out.println(year + "年 " + mouth + "月 " + day + "天 ");
         System.out.println("总天数：" + allDay);
         System.out.println("总小时：" + hour);
