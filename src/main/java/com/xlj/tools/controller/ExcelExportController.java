@@ -3,8 +3,8 @@ package com.xlj.tools.controller;
 import com.alibaba.excel.EasyExcelFactory;
 import com.xlj.tools.bean.ExportNews;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +20,14 @@ import java.util.List;
  * @date 2021/5/6
  */
 @Slf4j
-@RestController
+@Controller
 public class ExcelExportController {
+
+    @GetMapping("/exportExcel")
+    public String exportExcel() {
+        return "exportExcel";
+    }
+
     /**
      * 导出数据
      *
