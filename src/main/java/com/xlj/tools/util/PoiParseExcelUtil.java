@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
  * @author xlj
  * @date 2021/5/6
  */
-public class ParseExcelUtil {
+public class PoiParseExcelUtil {
     public static void main(String[] args) throws Exception {
         sqlGenerate();
     }
