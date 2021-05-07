@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX请求获取数据</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+</head>
+<body>
+<div align="center">
+    <h1>通过AJAX获取一个对象</h1>
+    <input id="getOne" type="button" value="通过AJAX获取一个对象">
+    <div id="oneObject"></div>
+</div>
+
+<div align="center">
+    <h1>通过AJAX获取多个对象</h1>
+    <input id="getMany" type="button" value="通过AJAX获取多个对象">
+    <div id="manyObject"></div>
+</div>
+
+<div align="center">
+    <h1>表单提交数据到后台</h1>
+    <form>
+        id:<input type="text" id="id" value="1"> <br>
+        name:<input type="text" id="name" value="XLJ"> <br>
+        <input id="sender" type="button" value="提交">
+    </form>
+</div>
+
+</body>
+<script>
+    $('#getOne').click(function () {
+        $.get(
+            "getOneUser",
+            function (data) {
+                var user = JSON.parse(data);
+                var id = user.id;
+                var name = user.name;
+                $("#oneObject").html(user.id + "-------------" + user.name);
+            });
+    });
+</script>
+
+<script>
+    $('#getMany').click(function () {
+        $.get(
+            "getManyUser",
+            function (data) {
+                var users = $.parseJSON(data);
+
+                for (i in users) {
+                    var old = $("#manyObject").html();
+                    var user = users[i];
+                    $("#manyObject").html(old + "<br>" + user.id + "-------------" + user.name);
+                }
+            });
+    });
+</script>
+
+<script>
+    $('#sender').click(function () {
+        var id = document.getElementById('id').value;
+        var name = document.getElementById('name').value;
+        var user = {"name": name, "id": id};
+        var jsonData = JSON.stringify(user);
+
+        $.ajax({
+            type: "post",
+            url: "submitUser",
+            data: jsonData,
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+            }
+        });
+        alert("提交成功,控制台查看接收数据")
+    })
+</script>
+</html>

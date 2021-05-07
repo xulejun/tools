@@ -17,6 +17,19 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
+        <!--        邮件-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!--        easyExcel-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+
         <!--        zxing解析二维码-->
         <dependency>
             <groupId>com.google.zxing</groupId>
