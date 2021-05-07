@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -25,8 +26,24 @@ import java.net.URL;
 @Slf4j
 public class QrCodeUtil {
     public static void main(String[] args) throws Exception {
+        // 二维码解析
         String url = "https://mmbiz.qpic.cn/mmbiz_jpg/N6rM2Jp5QdiaBxC4ygWxbZPJ6cpib0PUycKyZH8sudQ0UF46NgUXQibGicbGSm9lyjeQnEx9ibLG7Q3BnMMbEcGnVGA/640?wx_fmt=jpeg";
         parse(url);
+
+        // 二维码生成
+        String path = "C:/Users/DELL/Desktop/1.png";
+        create(path);
+    }
+
+    /**
+     * Hutool工具生成二维码
+     */
+    public static void create(String path) {
+        File file = new File(path);
+        // 二维码内容
+        String lover = "JYJ";
+        cn.hutool.extra.qrcode.QrCodeUtil.generate(lover, 100, 100, file);
+        log.info("二维码生成成功");
     }
 
     /**
