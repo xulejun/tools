@@ -2,7 +2,7 @@ package com.xlj.tools.util;
 
 import com.alibaba.excel.EasyExcel;
 import com.xlj.tools.bean.ExportNews;
-import com.xlj.tools.listen.TableListener;
+import com.xlj.tools.listener.TableListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**
