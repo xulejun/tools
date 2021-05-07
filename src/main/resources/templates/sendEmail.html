@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发送邮件</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+</head>
+<body>
+<div align="center">
+    <h1>发送简单的邮件</h1>
+    <form action="email/simple" method="post">
+        内容：<input type="text" name="msg" value="hello"> <br>
+        邮箱：<input type="text" name="email" value="1787008626@qq.com"> <br>
+        <button type="submit">提交</button>
+    </form>
+</div>
+<div align="center">
+    <h1>html邮件格式</h1>
+    <form action="email/html" method="post">
+        内容：<input type="text" name="msg" value="hello"> <br>
+        邮箱：<input type="text" name="email" value="1787008626@qq.com"> <br>
+        <button type="submit">提交</button>
+    </form>
+</div>
+<div align="center">
+    <h1>包含附件的邮件发送</h1>
+    <form action="email/withAnnex" method="post">
+        内容：<input type="text" name="msg" value="hello"> <br>
+        邮箱：<input type="text" name="email" value="1787008626@qq.com"> <br>
+        <button type="submit">提交</button>
+    </form>
+</div>
+<div align="center">
+    <h1>html带有图片</h1>
+    <form action="email/withImg" method="post">
+        内容：<input type="text" name="msg" value="hello"> <br>
+        邮箱：<input type="text" name="email" value="1787008626@qq.com"> <br>
+        <button type="submit">提交</button>
+    </form>
+</div>
+</body>
+
+</html>
