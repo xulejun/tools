@@ -6,6 +6,8 @@ import com.xlj.tools.service.FileInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author xlj
  * @date 2021/5/1 18:37
@@ -43,5 +45,10 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     public int updateByPrimaryKey(FileInfo fileInfo) {
         return fileInfoDao.updateByPrimaryKey(fileInfo);
+    }
+
+    @Override
+    public List<FileInfo> selectAll() {
+        return fileInfoDao.selectAll();
     }
 }

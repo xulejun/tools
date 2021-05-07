@@ -4,7 +4,54 @@
     <meta charset="UTF-8">
     <title>图片上传</title>
 </head>
+<style type="text/css">
+    .tableborder {
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        /*以上分别设置的是表格边框中上右下左的边框宽度*/
+        border-top-style: solid;
+        border-right-style: solid;
+        border-bottom-style: solid;
+        border-left-style: solid;
+        /*设置边框的表现样式，solid为实线*/
+        border-top-color: #dbbfa4;
+        border-right-color: #dbbfa4;
+        border-bottom-color: #dbbfa4;
+        border-left-color: #dbbfa4;
+        /*设置边框的颜色*/
+    }
+</style>
 <body>
+
+<div style="width:500px;margin:100px auto;text-align: center">
+    <table align='center' border='1' cellspacing='0' class="tableborder">
+        <tr>
+            <td>文件id</td>
+            <td>文件名</td>
+            <td>文件路径</td>
+            <td>下载</td>
+            <td>删除</td>
+        </tr>
+        <tr th:each="c : ${files.getList()}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.name}"></td>
+            <td th:text="${c.path}"></td>
+            <td><a th:href="@{/download(id=${c.id})}">下载</a></td>
+            <td><a th:href="@{/deleteFile(id=${c.id})}">删除</a></td>
+        </tr>
+    </table>
+    <br/>
+    <div>
+        <a th:href="@{/listProduct(start=0)}">[首 页]</a>
+        <a th:href="@{/listProduct(start=${files.getPageNum()-1})}">[上一页]</a>
+        <a th:href="@{/listProduct(start=${files.getPageNum()+1})}">[下一页]</a>
+        <a th:href="@{/listProduct(start=${files.getPages()})}">[末 页]</a>
+    </div>
+    <br/>
+</div>
+
 <div style="width:500px;margin:100px auto;text-align: center">
     <form action="uploadImg" method="post" enctype="multipart/form-data">
         <!--    accept="image/*"  表示只能选择图片进行上传-->

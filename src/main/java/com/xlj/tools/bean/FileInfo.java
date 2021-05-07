@@ -1,5 +1,6 @@
 package com.xlj.tools.bean;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Data;
  * @date 2021/5/1 8:06
  */
 @Data
+@Builder
 public class FileInfo {
     private Integer id;
     /**

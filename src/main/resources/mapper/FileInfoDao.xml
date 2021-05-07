@@ -62,4 +62,10 @@
       `path` = #{path,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <select id="selectAll" resultType="com.xlj.tools.bean.FileInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from file_info
+    </select>
 </mapper>

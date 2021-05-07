@@ -1,6 +1,9 @@
 package com.xlj.tools.service;
 
 import com.xlj.tools.bean.FileInfo;
+import com.xlj.tools.bean.Product;
+
+import java.util.List;
 
 /**
  * @author XLJ
@@ -53,4 +56,6 @@ public interface FileInfoService {
      * @return
      */
     int updateByPrimaryKey(FileInfo record);
+
+    List<FileInfo> selectAll();
 }
