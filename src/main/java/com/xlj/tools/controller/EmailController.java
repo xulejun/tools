@@ -82,6 +82,7 @@ public class EmailController {
             messageHelper.setSubject("HTML邮件");
             String html = "<div><h1><a name=\"hello\"></a><span>Hello</span></h1><blockquote><p><span>this is a html email.</span></p></blockquote><p>&nbsp;</p><p><span>"
                     + msg + "</span></p></div>";
+            // 通过 MimeMessageHelper 发送复杂邮件
             messageHelper.setText(html, true);
             mailSender.send(message);
             return "发送成功";
@@ -116,6 +117,7 @@ public class EmailController {
             // 文件路径可以写成相对路径src/main/resources/x.pdf，也可以用绝对路径：System.getProperty("user.dir") + "/src/main/resources/x.pdf"
             File file = new File(System.getProperty("user.dir") + "/src/main/resources/img/7cflw.jpg");
             log.info("文件是否存在：{}", file.exists());
+            // 通过 MimeMessageHelper 发送复杂邮件
             messageHelper.addAttachment(file.getName(), file);
             mailSender.send(message);
             return "发送成功";
@@ -147,6 +149,7 @@ public class EmailController {
                     + msg + "</span></p><img src='cid:myImg' /></div>";
             messageHelper.setText(html, true);
             File file = new File("src/main/resources/img/7cflw.jpg");
+            // 通过 MimeMessageHelper 发送复杂邮件
             messageHelper.addInline("myImg", file);
             mailSender.send(message);
             return "发送成功";
