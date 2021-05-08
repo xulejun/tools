@@ -30,35 +30,4 @@ public class ToolsApplicationTests {
         JSONArray objects = new JSONArray(list);
         List<User> users = JSONUtil.toList(objects, User.class);
     }
-
-    /**
-     * HuTool性能统计
-     */
-    @Test
-    public void test8() {
-        int loopcount = 2;
-        TimeInterval timer = DateUtil.timer();
-        forloop(loopcount);
-        long interval1 = timer.interval();
-        log.info("性能统计，总共花费了{} (毫秒数)", interval1);
-
-        forloop(loopcount);
-        long interval2 = timer.intervalRestart();
-        log.info("性能统计，总共花费了 {}(毫秒数),并重置", interval2);
-
-        forloop(loopcount);
-        long interval3 = timer.interval();
-        log.info("性能统计，总共花费了 {}(毫秒数)", interval3);
-    }
-
-    private void forloop(int total) {
-        for (int i = 0; i < total; i++) {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 }
