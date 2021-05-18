@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/5/17
  */
 @Slf4j
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class RedisRefreshJob {
     @Autowired
     private RedisTemplate redisTemplate;
@@ -36,7 +38,7 @@ public class RedisRefreshJob {
     @Scheduled(fixedDelay = 5000)
     public void refreshHour() {
         // 计算当前时间的key
-        long hour = System.currentTimeMillis() / 1000 * 60 * 60;
+        long hour = System.currentTimeMillis() / (1000 * 60 * 60);
         // 为26个英文字母（标题）增加score积分
         for (int i = 1; i <= 26; i++) {
             redisTemplate.opsForZSet().incrementScore(RedisConstant.HOUR_KEY + hour, String.valueOf((char) (96 + i)), RandomUtil.randomInt(10));
@@ -49,7 +51,7 @@ public class RedisRefreshJob {
     @Scheduled(cron = "0 0 0/1 * * ? ")
     public void refreshKey() {
         // 计算当前时间的key
-        long hour = System.currentTimeMillis() / 1000 * 60 * 60;
+        long hour = System.currentTimeMillis() / (1000 * 60 * 60);
         // 刷新天数据
         refreshDay(hour);
         // 刷新周数据
@@ -61,7 +63,7 @@ public class RedisRefreshJob {
 
     private void refreshMonth(long hour) {
         List<String> keyList = new ArrayList<>();
-        for (int i = 1; i < 24 * 30 - 1; i++) {
+        for (int i = 1; i < 24 * 30; i++) {
             String key = RedisConstant.HOUR_KEY + (hour - i);
             keyList.add(key);
         }
@@ -72,7 +74,7 @@ public class RedisRefreshJob {
 
     private void refreshWeek(long hour) {
         List<String> keyList = new ArrayList<>();
-        for (int i = 1; i < 24 * 7 - 1; i++) {
+        for (int i = 1; i < 24 * 7; i++) {
             String key = RedisConstant.HOUR_KEY + (hour - i);
             keyList.add(key);
         }
@@ -84,7 +86,7 @@ public class RedisRefreshJob {
     private void refreshDay(long hour) {
         List<String> keyList = new ArrayList<>(24);
         // 添加 24hour 的热点key
-        for (int i = 1; i < 23; i++) {
+        for (int i = 1; i < 24; i++) {
             String key = RedisConstant.HOUR_KEY + (hour - i);
             keyList.add(key);
         }
