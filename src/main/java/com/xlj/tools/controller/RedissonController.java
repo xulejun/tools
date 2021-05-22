@@ -3,12 +3,14 @@ package com.xlj.tools.controller;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RCountDownLatch;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
@@ -57,6 +59,13 @@ public class RedissonController {
         return "hello";
     }
 
+    /**
+     * 保证一定能获取最新数据，修改期间，写锁就是一个排它锁（互斥锁）。读锁是一个共享锁
+     * 写锁没释放，读锁就一直等待
+     * 只要有写锁存在，就必须等待，无论是 读+写 还是 写+读
+     *
+     * @return
+     */
     @GetMapping("/writeLock")
     public String writeLock() {
         RReadWriteLock lock = redissonClient.getReadWriteLock("read-write-lock");
@@ -94,5 +103,29 @@ public class RedissonController {
             rLock.unlock();
         }
         return uuid;
+    }
+
+    /**
+     * 分布式闭锁：闭锁数量完全减少，释放锁，不然持续等待
+     *
+     * @return
+     * @throws InterruptedException
+     */
+    @GetMapping("/lockDoor")
+    public String lockDoor() throws InterruptedException {
+        RCountDownLatch countDownLatch = redissonClient.getCountDownLatch("count-down-lock");
+        // 闭锁设置数量
+        countDownLatch.trySetCount(5);
+        // 等待闭锁完成
+        countDownLatch.await();
+        return "校门已锁";
+    }
+
+    @GetMapping("/holiday/{id}")
+    public String holiday(@PathVariable Integer id) {
+        RCountDownLatch countDownLatch = redissonClient.getCountDownLatch("count-down-lock");
+        // 计数减1
+        countDownLatch.countDown();
+        return id + "班放假了";
     }
 }
