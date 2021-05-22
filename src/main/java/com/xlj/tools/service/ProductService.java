@@ -22,4 +22,6 @@ public interface ProductService {
     int updateByPrimaryKey(Product record);
 
     List<Product> selectAll();
+
+    List<Product> selectSkillProduct();
 }

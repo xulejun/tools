@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.CompletableFuture;
@@ -25,9 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/4/29
  */
 @Slf4j
-//@EnableAsync
-//@Configuration
-//@EnableScheduling
+//@Component
 public class StartJob {
     Integer i = 0;
 

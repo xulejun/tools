@@ -19,18 +19,17 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@SpringBootTest
+//@SpringBootTest
 public class ToolsApplicationTests {
     @Autowired
     RedissonClient redissonClient;
 
     @Test
     void contextLoads() throws IOException {
-        try {
-            int i = 10 / 0;
-        } catch (Exception e) {
-            log.info("做个日志测试：", e);
-        }
+        System.out.println(System.getProperty("user.dir"));
+        int a = 10 - 9;
+        int b = 1 / a;
+        int c = 1 / (10 - 9);
     }
 
     @Test

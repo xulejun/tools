@@ -24,4 +24,6 @@ public interface ProductDao {
     int updateByPrimaryKey(Product record);
 
     List<Product> selectAll();
+
+    List<Product> selectSkillProduct();
 }

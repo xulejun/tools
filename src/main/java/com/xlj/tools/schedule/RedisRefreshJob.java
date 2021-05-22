@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 //@Component
-//@EnableScheduling
 public class RedisRefreshJob {
     @Autowired
     private RedisTemplate redisTemplate;

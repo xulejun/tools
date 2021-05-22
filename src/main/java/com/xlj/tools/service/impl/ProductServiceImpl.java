@@ -51,4 +51,9 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> selectAll() {
         return productDao.selectAll();
     }
+
+    @Override
+    public List<Product> selectSkillProduct() {
+        return productDao.selectSkillProduct();
+    }
 }
