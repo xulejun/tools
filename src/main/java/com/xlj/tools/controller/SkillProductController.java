@@ -1,8 +1,20 @@
 package com.xlj.tools.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.xlj.tools.bean.Product;
+import com.xlj.tools.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * 商品秒杀关注的几个问题：
@@ -27,6 +39,22 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/5/22
  */
 @Slf4j
-@RestController
+@Controller
 public class SkillProductController {
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @GetMapping("/skillProductList")
+    public String skillProductList(Model model) {
+        BoundHashOperations hashOps = redisTemplate.boundHashOps("skill:product:");
+        List<Product> redisProduct = hashOps.multiGet(hashOps.keys());
+        model.addAttribute("page", redisProduct);
+        return "skillProductList";
+    }
+
+    @GetMapping("/skillProduct")
+    public String skillProduct(@RequestParam Integer id,@RequestParam String code){
+        // 这里省略了各种校验：随机码校验、场次时间校验、商品id校验
+        return null;
+    }
 }

@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
+ * RabbitMQ 配置
+ *
  * @author xlj
  * @date 2021/3/17
  */
@@ -66,4 +68,6 @@ public class MyRabbitConfig {
             }
         });
     }
+
+    // TODO 队列绑定
 }

@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author xlj
  */
-@EnableRabbit
+@EnableRabbit   // 只是在监听消息时需要
 @SpringBootApplication
 @MapperScan("com.xlj.tools.dao")
 public class ToolsApplication {

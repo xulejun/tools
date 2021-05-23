@@ -1,0 +1,18 @@
+/*表格样式*/
+.tableborder {
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    /*以上分别设置的是表格边框中上右下左的边框宽度*/
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    /*设置边框的表现样式，solid为实线*/
+    border-top-color: #dbbfa4;
+    border-right-color: #dbbfa4;
+    border-bottom-color: #dbbfa4;
+    border-left-color: #dbbfa4;
+    /*设置边框的颜色*/
+}

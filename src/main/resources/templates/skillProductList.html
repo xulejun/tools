@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品秒杀</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+</head>
+<body>
+<div style="width:500px;margin:100px auto;text-align: center">
+    <h1>商品秒杀列表</h1>
+    <table align='center' border='1' cellspacing='0' class="tableborder">
+        <tr>
+            <td>商品id</td>
+            <td>商品名称</td>
+            <td>秒杀价格</td>
+            <td>抢购</td>
+        </tr>
+        <tr th:each="c : ${page}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.name}"></td>
+            <td th:text="${c.price}"></td>
+            <td><a href="#" id="skill" th:attr="id=${c.getId()},code=${c.getSkillCode()}">抢购</a></td>
+        </tr>
+    </table>
+    <br/>
+    <br/>
+</div>
+</body>
+
+<script>
+    $('#skill').click(function () {
+        var id = $(this).attr("id");
+        var code = $(this).attr("code");
+        location.href = "/skillProduct?id=" + id + "&code=" + code;
+        return false;
+    })
+</script>
+</html>

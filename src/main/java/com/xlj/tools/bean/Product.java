@@ -29,4 +29,8 @@ public class Product {
      * 库存
      */
     private Integer stock;
+    /**
+     * 秒杀随机码
+     */
+    private String skillCode;
 }

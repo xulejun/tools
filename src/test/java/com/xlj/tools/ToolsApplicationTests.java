@@ -26,10 +26,7 @@ public class ToolsApplicationTests {
 
     @Test
     void contextLoads() throws IOException {
-        System.out.println(System.getProperty("user.dir"));
-        int a = 10 - 9;
-        int b = 1 / a;
-        int c = 1 / (10 - 9);
+        System.out.println("该死的大雨，居然阻止我和姜咏菁约会，哼~~~~");
     }
 
     @Test
