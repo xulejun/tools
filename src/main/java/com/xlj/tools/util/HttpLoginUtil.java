@@ -26,30 +26,62 @@ import java.util.*;
 public class HttpLoginUtil {
 
     public static void main(String[] args) throws Exception {
-        byWebClient();
+        zcPreLogin();
+        lgPreLogin();
     }
 
     /**
-     * 通过webclient模拟登录
+     * 兰格资讯——预登陆
      *
-     * @throws java.io.IOException
+     * @throws Exception
      */
-    private static void byWebClient() throws java.io.IOException {
+    private static void lgPreLogin() throws Exception {
+        // webRequest请求参数
+        String loginUrl = "https://login.lgmi.com/clientlogin.aspx";
+        WebRequest webRequest = new WebRequest(new URL(loginUrl), HttpMethod.POST);
+        List<NameValuePair> param = new ArrayList<>();
+        param.add(new NameValuePair("ClientID", "badboy"));
+        param.add(new NameValuePair("ClientPassword", "xulejun520."));
+        param.add(new NameValuePair("submit", "%B5%C7%C2%BC"));
+        webRequest.setRequestParameters(param);
+
+        // 添加请求头访问
+        WebClient webClient = getWebClient();
+        webClient.addRequestHeader("origin", "https://bancai.lgmi.com");
+        webClient.addRequestHeader("Host", "login.lgmi.com");
+        webClient.addRequestHeader("Referer", "https://bancai.lgmi.com/");
+        webClient.getPage(webRequest).getWebResponse();
+
+        // 获取登录后的文章内容
+        webClient.addRequestHeader("Host", "jiancai.lgmi.com");
+        String articleUrl = "https://jiancai.lgmi.com/html.aspx?cityid=&articleid=A1102&recordno=231283&u=/huizong/2021/05/24/A1102_a0f951.htm";
+        WebRequest webRequest1 = new WebRequest(new URL(articleUrl), HttpMethod.GET);
+        String content = webClient.getPage(webRequest1).getWebResponse().getContentAsString();
+        log.info("请求内容：{}，\n 是否含有文章内容：{}", content, content.contains("6270"));
+    }
+
+    /**
+     * 通过webclient模拟登录——卓创资讯
+     *
+     * @throws Exception
+     */
+    private static void zcPreLogin() throws Exception {
+        // webRequest请求参数
         String loginUrl = "https://steel.sci99.com/include/login.aspx";
         WebRequest webRequest = new WebRequest(new URL(loginUrl), HttpMethod.POST);
         List<NameValuePair> param = new ArrayList<>();
         param.add(new NameValuePair("__EVENTTARGET", "ctl05"));
         param.add(new NameValuePair("__VIEWSTATE", "/wEPDwUKLTI1MjY0MDM3Mw9kFgICAw9kFgRmDw9kFgIeCW9ua2V5ZG93bgU+aWYoZXZlbnQua2V5Q29kZT09MTMpIHtkb2N1bWVudC5hbGwuTG9naW4xX0J0bl9Mb2dpbi5mb2N1cygpO31kAgEPD2QWAh8ABT5pZihldmVudC5rZXlDb2RlPT0xMykge2RvY3VtZW50LmFsbC5Mb2dpbjFfQnRuX0xvZ2luLmZvY3VzKCk7fWRkeNnjQspQREPdVVpsj+XgtPiaBWg="));
-//        param.add(new NameValuePair("__VIEWSTATEGENERATOR", "ED51F092"));
         param.add(new NameValuePair("__EVENTVALIDATION", "/wEdAAbf7l8OdmxqSEoCPpeksJBTdicwIMstYnN20wZWH/gF/foWvHPm8vPP7prsqCzifKjwWriCj8gV6CIJZW8YDaPWUsZheAEslh4OlJsRxjnnZUnpuNJj0GyYTp7sUai+sw+QzrdxU0NZa94jORm5I98J2F/KfQ=="));
         param.add(new NameValuePair("chemname", "bad_boy"));
         param.add(new NameValuePair("chempwd", "xulejun520."));
-//        param.add(new NameValuePair("fl1", "0"));
         param.add(new NameValuePair("cookieenable", "true"));
         webRequest.setRequestParameters(param);
 
-        // webClient请求登录接口
+        // 添加请求头访问登录接口
         WebClient webClient = getWebClient();
+        webClient.addRequestHeader("origin", "https://www.sci99.com");
+        webClient.addRequestHeader("authority", "www.sci99.com");
         webClient.getPage(webRequest).getWebResponse();
 
         // 请求文章接口
@@ -204,37 +236,19 @@ public class HttpLoginUtil {
         return outStream.toByteArray();
     }
 
-
+    /**
+     * webClient配置
+     *
+     * @return
+     */
     private static WebClient getWebClient() {
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
-        webClient.getOptions().setTimeout(20000);
-        // webClient.getCookieManager().setCookiesEnabled(true);
+        webClient.getOptions().setTimeout(15 * 1000);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        // webClient.getCookieManager().setCookiesEnabled(true);
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.addRequestHeader("authority", "www.sci99.com");
-        webClient.addRequestHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-        webClient.addRequestHeader("accept-encoding", "gzip, deflate, br");
-        webClient.addRequestHeader("accept-language", "zh-CN,zh;q=0.9");
-        webClient.addRequestHeader("cache-control", "no-cache");
-        webClient.addRequestHeader("origin", "https://www.sci99.com");
-        webClient.addRequestHeader("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
         return webClient;
     }
-
-//                .header("Connection", "keep-alive")
-//                .header("sec-ch-ua-mobile", "?0")
-//                .header("Upgrade-Insecure-Requests", "1")
-//                .header("Origin", "https://steel.sci99.com")
-//                .header("Content-Type", "application/x-www-form-urlencoded")
-//                .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36")
-//                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-//                .header("Sec-Fetch-Site", "same-origin")
-//                .header("Sec-Fetch-Mode", "navigate")
-//                .header("Sec-Fetch-User", "?1")
-//                .header("Sec-Fetch-Dest", "iframe")
-//                .header("Referer", "https://steel.sci99.com/include/login.aspx?RequestId=1ca1a5d8d4865c9c")
-//                .header("Accept-Language","https://steel.sci99.com/include/login.aspx?RequestId=1ca1a5d8d4865c9c")
-//                .header("Cookie","https://steel.sci99.com/include/login.aspx?RequestId=1ca1a5d8d4865c9c")
 }
