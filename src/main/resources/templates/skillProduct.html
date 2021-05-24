@@ -16,11 +16,11 @@
             <td>秒杀价格</td>
             <td>抢购</td>
         </tr>
-        <tr th:each="c : ${page}">
-            <td th:text="${c.id}"></td>
-            <td th:text="${c.name}"></td>
-            <td th:text="${c.price}"></td>
-            <td><a href="#" id="skill" th:attr="id=${c.getId()},code=${c.getSkillCode()}">抢购</a></td>
+        <tr th:each="p:${list}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.name}"></td>
+            <td th:text="${p.price}"></td>
+            <td><a href="#" id="skill" th:attr="id=${p.id},code=${p.skillCode}">抢购</a></td>
         </tr>
     </table>
     <br/>
@@ -32,7 +32,7 @@
     $('#skill').click(function () {
         var id = $(this).attr("id");
         var code = $(this).attr("code");
-        location.href = "/skillProduct?id=" + id + "&code=" + code;
+        location.href = "/skillProduct?id=" + id.toString() + "&code=" + code;
         return false;
     })
 </script>

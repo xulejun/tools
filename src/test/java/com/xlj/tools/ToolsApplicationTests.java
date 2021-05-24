@@ -26,7 +26,6 @@ public class ToolsApplicationTests {
 
     @Test
     void contextLoads() throws IOException {
-        System.out.println("该死的大雨，居然阻止我和姜咏菁约会，哼~~~~");
     }
 
     @Test

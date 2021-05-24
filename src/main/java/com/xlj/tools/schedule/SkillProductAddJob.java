@@ -36,7 +36,7 @@ public class SkillProductAddJob {
 
     private final String SKILL_PRODUCT_PREFIX = "skill:product:";
 
-    @Scheduled(fixedDelay = 10 * 1000)
+    @Scheduled(fixedDelay = 10 * 60 * 1000)
     public void addProduct() {
         log.info("秒杀商品开始上架");
 

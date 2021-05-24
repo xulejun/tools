@@ -1,20 +1,20 @@
 package com.xlj.tools.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.xlj.tools.bean.Product;
-import com.xlj.tools.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RSemaphore;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 商品秒杀关注的几个问题：
@@ -44,17 +44,37 @@ public class SkillProductController {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @GetMapping("/skillProductList")
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @GetMapping("/skillProduct")
     public String skillProductList(Model model) {
         BoundHashOperations hashOps = redisTemplate.boundHashOps("skill:product:");
         List<Product> redisProduct = hashOps.multiGet(hashOps.keys());
-        model.addAttribute("page", redisProduct);
-        return "skillProductList";
+        model.addAttribute("list", redisProduct);
+        return "skillProduct";
     }
 
-    @GetMapping("/skillProduct")
-    public String skillProduct(@RequestParam Integer id,@RequestParam String code){
+    @GetMapping("/skill")
+    @ResponseBody
+    public String skillProduct(@RequestParam Integer id, @RequestParam String code) {
         // 这里省略了各种校验：随机码校验、场次时间校验、商品id校验
+        String key = "skill:semaphore:" + code;
+        if (redisTemplate.hasKey(key)) {
+            RSemaphore semaphore = redissonClient.getSemaphore(key);
+            try {
+                boolean b = semaphore.tryAcquire(1, 100, TimeUnit.MILLISECONDS);
+                if (b) {
+                    return "秒杀成功";
+
+                } else {
+                    return "秒杀失败";
+                }
+                // 信号量获取到了就说明秒杀成功了，通过商品id，可进行后续的下单操作
+            } catch (InterruptedException e) {
+                log.warn("秒杀失败");
+            }
+        }
         return null;
     }
 }
