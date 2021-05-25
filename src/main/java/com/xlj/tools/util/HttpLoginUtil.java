@@ -26,8 +26,43 @@ import java.util.*;
 public class HttpLoginUtil {
 
     public static void main(String[] args) throws Exception {
+//        jsPreLogin();
+
         zcPreLogin();
-        lgPreLogin();
+//        lgPreLogin();
+    }
+
+    /**
+     * 简数——预登陆
+     *
+     * @throws java.io.IOException
+     */
+    private static void jsPreLogin() throws Exception {
+        // webRequest请求参数
+        String loginUrl = "http://account.keydatas.com/login";
+        WebRequest webRequest = new WebRequest(new URL(loginUrl), HttpMethod.POST);
+        List<NameValuePair> param = new ArrayList<>();
+        param.add(new NameValuePair("account", "xule_jun@163.com"));
+        param.add(new NameValuePair("password", "xulejun520"));
+        param.add(new NameValuePair("source", "http://www.keydatas.com/product"));
+        param.add(new NameValuePair("rememberMe", "false"));
+        webRequest.setRequestParameters(param);
+
+        // 添加请求头访问
+        WebClient webClient = getWebClient();
+//        webClient.addRequestHeader("origin", "http://www.keydatas.com");
+//        webClient.addRequestHeader("Host", "account.keydatas.com");
+//        webClient.addRequestHeader("Referer", "http://www.keydatas.com/");
+//        webClient.getPage(webRequest).getWebResponse();
+
+        // 获取登录后的文章内容
+        webClient.addRequestHeader("origin", "http://dash.keydatas.com");
+        webClient.addRequestHeader("Host", "dash.keydatas.com");
+        webClient.addRequestHeader("Referer", "http://dash.keydatas.com/task/list?newTask=wizard");
+        String articleUrl = "http://dash.keydatas.com/task/group/list";
+        WebRequest webRequest1 = new WebRequest(new URL(articleUrl), HttpMethod.POST);
+        String content = webClient.getPage(webRequest1).getWebResponse().getContentAsString();
+        log.info("请求内容：{}，\n 是否含有文章内容：{}", content, content.contains("任务分组"));
     }
 
     /**
@@ -61,7 +96,7 @@ public class HttpLoginUtil {
     }
 
     /**
-     * 通过webclient模拟登录——卓创资讯
+     * 卓创资讯——通过webclient模拟登录
      *
      * @throws Exception
      */
@@ -83,6 +118,9 @@ public class HttpLoginUtil {
         webClient.addRequestHeader("origin", "https://www.sci99.com");
         webClient.addRequestHeader("authority", "www.sci99.com");
         webClient.getPage(webRequest).getWebResponse();
+        StringBuilder cookies = new StringBuilder();
+        webClient.getCookieManager().getCookies().forEach(cookies::append);
+        log.info("cookie:{}", cookies);
 
         // 请求文章接口
         String articleUrl = "https://steel.sci99.com/news/38363817.html";

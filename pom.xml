@@ -17,6 +17,13 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
+        <!--        selenium-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
         <!--        网页，请求-->
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
