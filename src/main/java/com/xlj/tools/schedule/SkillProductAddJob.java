@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/5/22
  */
 @Slf4j
-@Component
+//@Component
 public class SkillProductAddJob {
     @Autowired
     private ProductService productService;

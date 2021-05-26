@@ -26,6 +26,8 @@ public class ToolsApplicationTests {
 
     @Test
     void contextLoads() throws IOException {
+        File file = new File("");
+        System.out.println(file.getAbsolutePath());
     }
 
     @Test

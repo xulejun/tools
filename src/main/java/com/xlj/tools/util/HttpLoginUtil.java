@@ -26,9 +26,9 @@ import java.util.*;
 public class HttpLoginUtil {
 
     public static void main(String[] args) throws Exception {
-//        jsPreLogin();
+        jsPreLogin();
 
-        zcPreLogin();
+//        zcPreLogin();
 //        lgPreLogin();
     }
 
@@ -50,19 +50,25 @@ public class HttpLoginUtil {
 
         // 添加请求头访问
         WebClient webClient = getWebClient();
-//        webClient.addRequestHeader("origin", "http://www.keydatas.com");
-//        webClient.addRequestHeader("Host", "account.keydatas.com");
-//        webClient.addRequestHeader("Referer", "http://www.keydatas.com/");
-//        webClient.getPage(webRequest).getWebResponse();
+        webClient.addRequestHeader("origin", "http://www.keydatas.com");
+        webClient.addRequestHeader("Host", "account.keydatas.com");
+        webClient.addRequestHeader("Referer", "http://www.keydatas.com/");
+        webClient.getPage(webRequest).getWebResponse();
 
+        // 获取cookies
+        StringBuilder cookies = new StringBuilder();
+        webClient.getCookieManager().getCookies().forEach(cookie -> {
+            cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+        });
+        log.info("获取到的cookies：{}", cookies);
         // 获取登录后的文章内容
-        webClient.addRequestHeader("origin", "http://dash.keydatas.com");
-        webClient.addRequestHeader("Host", "dash.keydatas.com");
-        webClient.addRequestHeader("Referer", "http://dash.keydatas.com/task/list?newTask=wizard");
-        String articleUrl = "http://dash.keydatas.com/task/group/list";
-        WebRequest webRequest1 = new WebRequest(new URL(articleUrl), HttpMethod.POST);
-        String content = webClient.getPage(webRequest1).getWebResponse().getContentAsString();
-        log.info("请求内容：{}，\n 是否含有文章内容：{}", content, content.contains("任务分组"));
+//        webClient.addRequestHeader("origin", "http://dash.keydatas.com");
+//        webClient.addRequestHeader("Host", "dash.keydatas.com");
+//        webClient.addRequestHeader("Referer", "http://dash.keydatas.com/task/list?newTask=wizard");
+//        String articleUrl = "http://dash.keydatas.com/task/group/list";
+//        WebRequest webRequest1 = new WebRequest(new URL(articleUrl), HttpMethod.POST);
+//        String content = webClient.getPage(webRequest1).getWebResponse().getContentAsString();
+//        log.info("请求内容：{}，\n 是否含有文章内容：{}", content, content.contains("任务分组"));
     }
 
     /**
