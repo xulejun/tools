@@ -1,5 +1,6 @@
 package com.xlj.tools;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HtmlUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -34,40 +35,32 @@ import java.util.stream.Collectors;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SeleniumTest {
-    static String jsonStr = "[{\"isSecure\":false,\"path\":\"/\",\"domain\":\".steel.sci99.com\",\"name\":\"Hm_lvt_a831ffced6eb4eda5078ef1076222e03\",\"isHttpOnly\":false,\"expiry\":1653554310000,\"value\":\"1622017952\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\"steel.sci99.com\",\"name\":\"CNZZDATA1262024308\",\"isHttpOnly\":false,\"expiry\":1637743109000,\"value\":\"1805671474-1622016471-https%253A%252F%252Fsteel.sci99.com%252F%7C1622016471\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\"steel.sci99.com\",\"name\":\"ASP.NET_SessionId\",\"isHttpOnly\":false,\"value\":\"rtanfzvb1npv4jywtlqv3ne4\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\"steel.sci99.com\",\"name\":\"route\",\"isHttpOnly\":false,\"value\":\"5381fa73df88cce076c9e01d13c9b378\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\".sci99.com\",\"name\":\"STATReferrerIndexId\",\"isHttpOnly\":false,\"expiry\":1622061510000,\"value\":\"2\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\".sci99.com\",\"name\":\"guid\",\"isHttpOnly\":false,\"expiry\":4775618269000,\"value\":\"dca5f813-abb3-6c39-21a8-12ff13e0c38a\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\".sci99.com\",\"name\":\"isCloseOrderZHLayer\",\"isHttpOnly\":false,\"expiry\":1622061469000,\"value\":\"0\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\".steel.sci99.com\",\"name\":\"Hm_lpvt_a831ffced6eb4eda5078ef1076222e03\",\"isHttpOnly\":false,\"value\":\"1622018310\"},{\"isSecure\":false,\"path\":\"/\",\"domain\":\".sci99.com\",\"name\":\"UM_distinctid\",\"isHttpOnly\":false,\"expiry\":1637743069000,\"value\":\"179a7d2a10d24d-02669abec06cc5-343c5606-1fa400-179a7d2a10e60f\"}]";
+    static String cookies = "__utmc=118792214; ASP.NET_SessionId=u2zv51by5x5odhuj4j1n3s55; ASPSESSIONIDSGCSTBAT=NMOGBIPAECGFNDBALEOMAOEJ; ASPSESSIONIDSGCQQACR=EKIOPDMBDNMDCPKBJMMACDOC; ASPSESSIONIDQEARTCDQ=HPKINPICMDDJHPOBHLBLJHEL; Hm_lvt_4df7897ce5ff84810a1a7e9a1ace8249=1621818337,1621923874,1622015315; __utmz=118792214.1622093871.4.4.utmcsr=login.lgmi.com|utmccn=(referral)|utmcmd=referral|utmcct=/; ASPSESSIONIDQEASQBBT=JGODMLFDCPEJNJJGGIBAHNDA; __utma=118792214.842640809.1622015328.1622093871.1622102334.5; __utmt=1; __utmt_~1=1; Hm_lpvt_4df7897ce5ff84810a1a7e9a1ace8249=1622102674; __utmb=118792214.11.10.1622102334; lgmi=ClientID=badboy&userprivilege=infotest&Mytime=2021/5/27 16:04:34";
+    // 卓创登录url
+//        String loginUrl = "https://www.sci99.com/";
+//        String loginUrl = "https://www.sci99.com/include/scilogin.aspx";
+//        String articleUrl = "https://steel.sci99.com/news/38363817.html";
+    // 兰格
+//        String loginUrl = "https://info.lgmi.com/login_news/login.aspx";
+    String loginUrl = "https://www.lgmi.com/";
+    String articleUrl1 = "https://jiancai.lgmi.com/html.aspx?cityid=&articleid=A1102&recordno=231283&u=/huizong/2021/05/24/A1102_a0f951.htm";
+    String articleUrl2 = "https://guancai.lgmi.com/html.aspx?cityid=A0328&articleid=A1501&recordno=5583511&u=/hangqing/2021/05/27/A0328_A1501.htm";
+    // 简数
+//        String loginUrl = "http://account.keydatas.com/login";
+//        String articleUrl = "http://dash.keydatas.com/task/group/list";
+    // qq邮箱
+//        String loginUrl = "https://mail.qq.com";
+//        String articleUrl = "https://mail.qq.com/cgi-bin/setting4?fun=list&acc=1&sid=NWkP8VOop7kUNnIS&go=mybirthinfo";
     private static ChromeDriver browser;
 
     // 驱动路径（在resource/driver下有该驱动）
     @Value("${selenium.webDriverPath}")
     private String driverPath;
 
-    /**
-     * 运行后关闭浏览器
-     */
-    @AfterClass
-    public static void closeBrowser() {
-        browser.quit();
-    }
 
     @Test
     public void preLoginTest() throws Exception {
-        getBrowser();
-
-        // 卓创登录url
-//        String loginUrl = "https://www.sci99.com/";
-        String loginUrl = "https://www.sci99.com/include/scilogin.aspx";
-        String articleUrl = "https://steel.sci99.com/news/38363817.html";
-        // 兰格
-//        String loginUrl = "https://info.lgmi.com/login_news/login.aspx";
-//        String loginUrl = "https://www.lgmi.com/";
-//        String articleUrl = "https://jiancai.lgmi.com/html.aspx?cityid=&articleid=A1102&recordno=231283&u=/huizong/2021/05/24/A1102_a0f951.htm";
-        // 简数
-//        String loginUrl = "http://account.keydatas.com/login";
-//        String articleUrl = "http://dash.keydatas.com/task/group/list";
-        // qq邮箱
-//        String loginUrl = "https://mail.qq.com";
-//        String articleUrl = "https://mail.qq.com/cgi-bin/setting4?fun=list&acc=1&sid=NWkP8VOop7kUNnIS&go=mybirthinfo";
-        browser.get(loginUrl);
+//        getBrowser();
 
         // 持续等待，直到扫码完成（扫码登录上去cookies的size=13）
 //        long waitTime = 1L;
@@ -77,7 +70,8 @@ public class SeleniumTest {
 //            log.info("等待时间：{} 秒", waitTime * waitCount);
 //            waitCount++;
 //        }
-        TimeUnit.SECONDS.sleep(20L);
+//        browser.get(loginUrl);
+//        TimeUnit.SECONDS.sleep(20L);
 
         // 获取cookies
 //        StringBuilder cookies = new StringBuilder();
@@ -98,33 +92,75 @@ public class SeleniumTest {
 //                    it.getBool("isSecure"),
 //                    it.getBool("isHttpOnly"));
 //        }).collect(Collectors.toList());
-        List<Cookie> cookieList = new ArrayList<>(browser.manage().getCookies());
-        log.info("获取到的cookies：{}", cookieList);
-        browser.quit();
+//        List<Cookie> cookieList = new ArrayList<>(browser.manage().getCookies());
+//        log.info("获取到的cookies：{}", cookieList);
+//        browser.quit();
+
 
         getBrowser();
         // 先访问，不然添加cookie会报错:invalid cookie domain
         browser.get(loginUrl);
+//        browser.manage().deleteAllCookies();
 
         // 添加cookie
-        for (Cookie cookie : cookieList) {
-            browser.manage().addCookie(cookie);
+//        for (Cookie cookie : cookieList) {
+//            browser.manage().addCookie(cookie);
+//        }
+        List<String> cookieList = StrUtil.splitTrim(cookies, ";");
+        for (String cookie : cookieList) {
+            String cookieName = cookie.substring(0, cookie.indexOf("="));
+            String cookieValue = cookie.substring(cookie.indexOf("=") + 1);
+            browser.manage().addCookie(new Cookie(cookieName, cookieValue, ".lgmi.com", "/", null));
         }
 
         // 文章请求
-//        HttpResponse response = HttpRequest.get(articleUrl)
-//                .header("cookie",cookies.toString())
+//        HttpResponse response1 = HttpRequest.get(articleUrl1)
+//                .header("cookie", cookies)
 //                .execute();
-        browser.get(articleUrl);
+        browser.get(articleUrl1);
 
 //        log.info("文章内容：{}，\n是否有登录后的卓创资讯文章内容：{}", response.body(), response.body().contains("热轧夜盘再次下挫"));
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response.body(), response.body().contains("↓880"));
+//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response1.body(), response1.body().contains("↓880"));
 //        log.info("文章内容：{}，\n是否有登录后的简数文章内容：{}", response.body(), response.body().contains("任务分组"));
 
-        log.info("文章内容：{}，\n是否有登录后的卓创资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("热轧夜盘再次下挫"));
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("↓880"));
+//        log.info("文章内容：{}，\n是否有登录后的卓创资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("热轧夜盘再次下挫"));
+        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("↓880"));
+//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("过磅含税价"));
 //        log.info("文章内容：{}，\n是否有登录后的简数文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("任务分组"));
 //        log.info("文章内容：{}，\n是否有登录后的简数文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("Bad、boy"));
+        browser.quit();
+
+//        getBrowser();
+//        // 先访问，不然添加cookie会报错:invalid cookie domain
+//        browser.get(loginUrl);
+//        browser.manage().deleteAllCookies();
+//
+//        // 添加cookie
+////        for (Cookie cookie : cookieList) {
+////            browser.manage().addCookie(cookie);
+////        }
+//        for (String cookie : cookieList) {
+//            String cookieName = cookie.substring(0, cookie.indexOf("="));
+//            String cookieValue = cookie.substring(cookie.indexOf("=") + 1);
+//            browser.manage().addCookie(new Cookie(cookieName, cookieValue));
+//        }
+//        browser.get(articleUrl2);
+//        // 运行后关闭浏览器
+//        browser.quit();
+//
+////        HttpResponse response2 = HttpRequest.get(articleUrl2)
+////                .header("cookie", cookies)
+////                .execute();
+//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("过磅含税价"));
+//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response2.body(), response2.body().contains("过磅含税价"));
+    }
+
+    @Test
+    public void addCookieLogin() {
+        HttpResponse response1 = HttpRequest.get(articleUrl1)
+                .header("cookie", cookies)
+                .execute();
+        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response1.body(), response1.body().contains("↓880"));
     }
 
 
@@ -158,6 +194,9 @@ public class SeleniumTest {
         log.info("获取到的cookies：{}", cookies);
     }
 
+    /**
+     * 获取Selenium浏览器驱动
+     */
     private void getBrowser() {
         System.setProperty("webdriver.chrome.driver", driverPath);
         browser = new ChromeDriver();
