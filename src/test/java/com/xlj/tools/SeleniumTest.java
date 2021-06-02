@@ -1,28 +1,22 @@
 package com.xlj.tools;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HtmlUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 
 /**
@@ -35,30 +29,6 @@ import java.util.stream.Collectors;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SeleniumTest {
-    // 兰格cookie
-    private static String cookies = "__utmc=118792214; ASP.NET_SessionId=u2zv51by5x5odhuj4j1n3s55; ASPSESSIONIDSGCSTBAT=NMOGBIPAECGFNDBALEOMAOEJ; ASPSESSIONIDSGCQQACR=EKIOPDMBDNMDCPKBJMMACDOC; ASPSESSIONIDQEARTCDQ=HPKINPICMDDJHPOBHLBLJHEL; ASPSESSIONIDQEASQBBT=NLJENLFDIBFKCBFJHGOBJJDH; Hm_lvt_4df7897ce5ff84810a1a7e9a1ace8249=1621923874,1622015315,1622165842,1622183404; __utma=118792214.842640809.1622015328.1622172192.1622183404.11; __utmz=118792214.1622183404.11.7.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; __utmt=1; ASPSESSIONIDQEBSRBCR=KLMDKHCABANLPACOGBINFHID; __utmt_~1=1; __utmt_~2=1; __utmt_~3=1; Hm_lpvt_4df7897ce5ff84810a1a7e9a1ace8249=1622183597; __utmb=118792214.27.10.1622183404; lgmi=ClientID=badboy&userprivilege=infotest&Mytime=2021/5/28 14:33:17";
-    // 中联钢
-//    private static String cookies = "JSESSIONID=227D64ACE16C87F152FE252BA249631E; Hm_lvt_59843712887bd8aab5a8307c8f9215ac=1622171883,1622173717; Hm_lpvt_59843712887bd8aab5a8307c8f9215ac=1622173794";
-    // 卓创cookie
-//    private static String cookies = "route=5381fa73df88cce076c9e01d13c9b378; ASP.NET_SessionId=pzpcrdkmkh2rmnmaiqfdkhmx; guid=663cc3b7-81d9-aa4b-d2a7-f8df9b7d39ac; UM_distinctid=179a8021b789b-0721b5da1940a2-343c5606-1fa400-179a8021b7a3d1; href=https%3A%2F%2Fwww.sci99.com%2F; accessId=b101a8c0-85cc-11ea-b67c-831fe7f7f53e; CNZZDATA1269807659=2024453938-1622016720-%7C1622181765; BAIDU_SSP_lcr=https://www.baidu.com/link?url=25AP8OFrtqJiUGGFPzfAdsFvs_2ejM3KrpIezV8r22e&wd=&eqid=b7aac4c7000505d90000000660b08a92; qimo_seokeywords_b101a8c0-85cc-11ea-b67c-831fe7f7f53e=; isCloseOrderZHLayer=0; Hm_lvt_44c27e8e603ca3b625b6b1e9c35d712d=1622013217,1622021865,1622182559,1622182598; STATcUrl=https://www.sci99.com/undefined; Hm_lpvt_44c27e8e603ca3b625b6b1e9c35d712d=1622182745; STATReferrerIndexId=1; qimo_seosource_b101a8c0-85cc-11ea-b67c-831fe7f7f53e=%E7%AB%99%E5%86%85; pageViewNum=12";
-
-
-    // 中联钢
-//    String loginUrl = "http://www.custeel.com";
-//    String articleUrl1 = "http://www.custeel.com/reform/view.mv?articleID=6554698&group=1013006002&cat=";   // 不锈钢废钢频道
-//    String articleUrl2 = "http://www.custeel.com/reform/view.mv?articleID=6554699&group=1001&cat=1006002";   // 线螺频道
-    // 卓创登录url
-//        String loginUrl = "https://www.sci99.com";
-//        String articleUrl1 = "https://oil.chem99.com/news/33510733.html";    // 能源频道
-//        String articleUrl11 = "https://oil.chem99.com/news/33511489.html";    // 能源频道
-//        String articleUrl2 = "https://chem.chem99.com/news/38444006.html";    // 化工频道
-    // 兰格
-    String loginUrl = "https://www.lgmi.com";
-    String articleUrl1 = "https://jiancai.lgmi.com/hangqing/2021/05/28/A0101_A11.htm";  // 建材频道
-    String articleUrl2 = "https://tegang.lgmi.com/hangqing/2021/05/28/A0201_C320302.htm"; // 特钢频道
-    // qq邮箱
-//        String loginUrl = "https://mail.qq.com";
-//        String articleUrl = "https://mail.qq.com/cgi-bin/setting4?fun=list&acc=1&sid=NWkP8VOop7kUNnIS&go=mybirthinfo";
 
     private static ChromeDriver browser;
 
@@ -67,94 +37,143 @@ public class SeleniumTest {
     private String driverPath;
 
     /**
-     * Selenium 贴cookie预登陆
+     * 自动配置模拟登录解析
      */
     @Test
-    public void bySeleniumLogin() {
-//        getBrowser();
+    public void autoClickGetCookie() throws Exception {
+        String loginUrl = "https://xui.ptlogin2.qq.com/cgi-bin/xlogin?target=self&appid=522005705&daid=4&s_url=https://mail.qq.com/cgi-bin/readtemplate?check=false%26t=loginpage_new_jump%26vt=passport%26vm=wpt%26ft=loginpage%26target=&style=25&low_login=1&proxy_url=https://mail.qq.com/proxy.html&need_qr=0&hide_border=1&border_radius=0&self_regurl=http://zc.qq.com/chs/index.html?type=1&app_id=11005?t=regist&pt_feedback_link=http://support.qq.com/discuss/350_1.shtml&css=https://res.mail.qq.com/zh_CN/htmledition/style/ptlogin_input_for_xmail51328e.css";
+        String articleUrl = "https://mail.qq.com/cgi-bin/readmail?folderid=3&folderkey=&t=readmail&mailid=ZC0007_ov7N8VOMGAYu15MAsG_6Nb5&mode=pre&maxage=3600&base=12.9&ver=11282&sid=bTEfLY-PcW-YC08v";
 
-        // 持续等待，直到扫码完成（扫码登录上去cookies的size=13）
-//        long waitTime = 1L;
-//        int waitCount = 1;
-//        while (browser.manage().getCookies().size() < 2) {
-//            TimeUnit.SECONDS.sleep(waitTime);
-//            log.info("等待时间：{} 秒", waitTime * waitCount);
-//            waitCount++;
-//        }
-//        browser.get(loginUrl);
-//        TimeUnit.SECONDS.sleep(20L);
+        String loginViewXpath = "";
+        String loginPreXpath = "//*[@id=\"switcher_plogin\"]";
+        String userName = "1142858332";
+        String password = "xulejun520-";
+        String userNameXpath = "//*[@id=\"u\"]";
+        String passwordXpath = "//*[@id=\"p\"]";
+        String loginXpath = "//*[@id=\"login_button\"]";
+        // 模拟登录获取cookies
+        String cookies = mockLogin(loginUrl, userName, password, userNameXpath, passwordXpath, loginXpath, loginViewXpath,loginPreXpath);
 
-        // 获取cookies
-//        StringBuilder cookies = new StringBuilder();
-//        browser.manage().getCookies().forEach(cookie -> {
-//            cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
-//        });
-//        log.info("获取到的cookies：{}", cookies);
+        // 静态采集
+        staticParse(cookies, articleUrl, null, null);
 
-//        JSONArray jsonArray = new JSONArray(jsonStr);
-//        List<Cookie> cookieList = jsonArray.stream().map(ii -> {
-//            JSONObject it = (JSONObject) ii;
-//            return new Cookie(
-//                    it.getStr("name"),
-//                    it.getStr("value"),
-//                    it.getStr("domain"),
-//                    it.getStr("path"),
-//                    it.getDate("expiry"),
-//                    it.getBool("isSecure"),
-//                    it.getBool("isHttpOnly"));
-//        }).collect(Collectors.toList());
-//        List<Cookie> cookieList = new ArrayList<>(browser.manage().getCookies());
-//        log.info("获取到的cookies：{}", cookieList);
-//        browser.quit();
+        // 动态采集
+        dynamicParse(cookies, articleUrl, loginUrl);
+    }
 
-
+    private String mockLogin(String loginUrl, String userName, String password,
+                             String userNameXpath, String passwordXpath, String loginXpath, String loginViewXpath,String loginPreXpath) throws Exception {
         getBrowser();
-        // 先访问，不然添加cookie会报错:invalid cookie domain
         browser.get(loginUrl);
-//        browser.manage().deleteAllCookies();
+        if (StrUtil.isNotBlank(loginViewXpath)) {
+            browser.findElementByXPath(loginViewXpath).click();
+            // 等待页面登录响应，todo 完善等待时间
+            TimeUnit.SECONDS.sleep(1);
+        }
+        if (StrUtil.isNotBlank(loginPreXpath)) {
+            browser.findElementByXPath(loginPreXpath).click();
+            // 等待页面登录响应，todo 完善等待时间
+            TimeUnit.SECONDS.sleep(1);
+        }
+        browser.findElementByXPath(userNameXpath).sendKeys(userName);
+        browser.findElementByXPath(passwordXpath).sendKeys(password);
+        browser.findElementByXPath(loginXpath).click();
+        // 等待页面登录响应，todo 待完善
+        TimeUnit.SECONDS.sleep(10);
+        // 获取cookies
+        StringBuilder cookies = new StringBuilder();
+        browser.manage().getCookies().forEach(cookie -> {
+            cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+        });
+        log.info("获取到的cookies：{}", cookies);
+        browser.quit();
+        return cookies.toString();
+    }
 
-        // 添加cookie
+    /**
+     * 手动贴cookie采集解析
+     */
+    @Test
+    public void manualGetCookie() throws Exception {
+        String loginUrl = "https://mail.qq.com/";
+        String articleUrl = "https://mail.qq.com/cgi-bin/readmail?folderid=3&fo lderkey=&t=readmail&mailid=ZC0007_ClbN03GMLDIuK28ADVygbb5&mode=pre&maxage=3600&base=12.8&ver=10705&sid=bTEfLY-PcW-YC08v";
+
+        // selenium获取cookies
+        String cookies = getCookie(loginUrl);
+
+        // 静态采集
+        staticParse(cookies, articleUrl, null, null);
+
+        // 动态采集
+        dynamicParse(cookies, articleUrl, loginUrl);
+    }
+
+    /**
+     * Selenium动态采集
+     *
+     * @param cookies
+     */
+    private void dynamicParse(String cookies, String articleUrl, String loginUrl) {
+        getBrowser();
+        // 先访问页面的登录页，目的是给cookie加domain，不然会报错:invalid cookie domain
+        browser.get(loginUrl);
+        // 因为上面只是访问登录页，并未做真正的登录，这里删除访问后的cookie
+        browser.manage().deleteAllCookies();
+        // 添加登录后的cookie
         List<String> cookieList = StrUtil.splitTrim(cookies, ";");
         for (String cookie : cookieList) {
             String cookieName = cookie.substring(0, cookie.indexOf("="));
             String cookieValue = cookie.substring(cookie.indexOf("=") + 1);
-            String domain = loginUrl.substring(loginUrl.indexOf("."));
+            // todo loginUrl要做校验，这里要给个策略拿出domain
+            String tempDomain = articleUrl.substring(articleUrl.indexOf("."));
+            String domain = tempDomain.substring(0, tempDomain.indexOf("/"));
             browser.manage().addCookie(new Cookie(cookieName, cookieValue, domain, "/", null));
         }
 
-        // 文章请求
-        browser.get(articleUrl2);
-
-//        log.info("文章内容：{}，\n是否有登录后的卓创资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("热轧夜盘再次下挫"));
-
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("↑100"));
-        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("↓200"));
-
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", browser.getPageSource(), browser.getPageSource().contains("瑞丰(协议户"));
-
+        // 文章请求 todo js脚本渲染等待时间
+        browser.get(articleUrl);
+        //        new WebDriverWait(browser, 100, 1000)
+//                .until(ExpectedConditions.visibilityOf(browser.findElement(By.cssSelector(".viewer-main-title>.item-teaser>.item-teaser-header>.item-teaser-title"))));
+        log.info("动态解析——文章内容：\n{}", browser.getPageSource());
         browser.quit();
     }
 
     /**
-     * HttpRequest 贴cookie预登陆
+     * HttpRequest静态采集
+     *
+     * @param cookies
      */
-    @Test
-    public void byHttpRequestLogin() {
-        HttpResponse response1 = HttpRequest.get(articleUrl2)
+    private void staticParse(String cookies, String articleUrl, String host, String referer) {
+        HttpResponse response = HttpRequest.get(articleUrl)
                 .header("cookie", cookies)
-                .setMaxRedirectCount(10)
+                .header("Host", host)
+                .header("Referer", referer)
                 .execute();
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response1.body(), response1.body().contains("↓880"));
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response1.body(), response1.body().contains("过磅含税价"));
-//        log.info("文章内容：{}，\n是否有登录后的兰格资讯文章内容：{}", response1.body(), response1.body().contains("↓50"));
-
-//        log.info("文章内容：{}，\n是否有登录后的中联钢文章内容：{}", response1.body(), response1.body().contains("304（Ni≈8%）"));
-//        log.info("文章内容：{}，\n是否有登录后的中联钢文章内容：{}", response1.body(), response1.body().contains("瑞丰(协议户"));
-
-//        log.info("文章内容：{}，\n是否有登录后的卓创文章内容：{}", response1.body(), response1.body().contains("没有浏览该信息的权限"));
-
+        log.info("静态解析——文章内容：\n{}", response.body());
     }
 
+    /**
+     * 获取cookies
+     *
+     * @return
+     * @throws Exception
+     */
+    private String getCookie(String loginUrl) throws Exception {
+        getBrowser();
+        // todo 完善等待时间
+        browser.get(loginUrl);
+        TimeUnit.SECONDS.sleep(20);
+
+        // 获取cookies
+        StringBuilder cookies = new StringBuilder();
+        browser.manage().getCookies().forEach(cookie -> {
+            cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+        });
+        log.info("获取到的cookies：{}", cookies.toString());
+        // 退出浏览器
+        browser.quit();
+        return cookies.toString();
+    }
 
     /**
      * 获取微信公众号登录cookies
@@ -192,6 +211,8 @@ public class SeleniumTest {
     private void getBrowser() {
         System.setProperty("webdriver.chrome.driver", driverPath);
         browser = new ChromeDriver();
-        browser.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        browser.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
+
+
 }
