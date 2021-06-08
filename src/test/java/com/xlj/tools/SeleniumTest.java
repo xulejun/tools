@@ -41,16 +41,16 @@ public class SeleniumTest {
      */
     @Test
     public void autoClickGetCookie() throws Exception {
-        String loginUrl = "https://xui.ptlogin2.qq.com/cgi-bin/xlogin?target=self&appid=522005705&daid=4&s_url=https://mail.qq.com/cgi-bin/readtemplate?check=false%26t=loginpage_new_jump%26vt=passport%26vm=wpt%26ft=loginpage%26target=&style=25&low_login=1&proxy_url=https://mail.qq.com/proxy.html&need_qr=0&hide_border=1&border_radius=0&self_regurl=http://zc.qq.com/chs/index.html?type=1&app_id=11005?t=regist&pt_feedback_link=http://support.qq.com/discuss/350_1.shtml&css=https://res.mail.qq.com/zh_CN/htmledition/style/ptlogin_input_for_xmail51328e.css";
-        String articleUrl = "https://mail.qq.com/cgi-bin/readmail?folderid=3&folderkey=&t=readmail&mailid=ZC0007_ov7N8VOMGAYu15MAsG_6Nb5&mode=pre&maxage=3600&base=12.9&ver=11282&sid=bTEfLY-PcW-YC08v";
+        String loginUrl = "https://oil.chem99.com/include/loginframetop.aspx";
+        String articleUrl = "https://oil.chem99.com/news/38443008.html";
 
         String loginViewXpath = "";
-        String loginPreXpath = "//*[@id=\"switcher_plogin\"]";
-        String userName = "1142858332";
-        String password = "xulejun520-";
-        String userNameXpath = "//*[@id=\"u\"]";
-        String passwordXpath = "//*[@id=\"p\"]";
-        String loginXpath = "//*[@id=\"login_button\"]";
+        String loginPreXpath = "";
+        String userName = "bad_boy";
+        String password = "xulejun520.";
+        String userNameXpath = "//*[@id=\"chemname\"]";
+        String passwordXpath = "//*[@id=\"chempwd\"]";
+        String loginXpath = "//*[@id=\"Btn_Login\"]";
         // 模拟登录获取cookies
         String cookies = mockLogin(loginUrl, userName, password, userNameXpath, passwordXpath, loginXpath, loginViewXpath,loginPreXpath);
 
@@ -96,7 +96,7 @@ public class SeleniumTest {
     @Test
     public void manualGetCookie() throws Exception {
         String loginUrl = "https://mail.qq.com/";
-        String articleUrl = "https://mail.qq.com/cgi-bin/readmail?folderid=3&fo lderkey=&t=readmail&mailid=ZC0007_ClbN03GMLDIuK28ADVygbb5&mode=pre&maxage=3600&base=12.8&ver=10705&sid=bTEfLY-PcW-YC08v";
+        String articleUrl = "https://mail.qq.com/cgi-bin/readmail?folderid=3&folderkey=&t=readmail&mailid=ZC0007_ClbN03GMLDIuK28ADVygbb5&mode=pre&maxage=3600&base=12.5&ver=10705&sid=TRFt5EYyfWPaMnYW";
 
         // selenium获取cookies
         String cookies = getCookie(loginUrl);
