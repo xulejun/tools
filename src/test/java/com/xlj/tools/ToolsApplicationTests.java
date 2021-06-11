@@ -3,6 +3,8 @@ package com.xlj.tools;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +41,44 @@ public class ToolsApplicationTests {
     }
 
     @Test
-    public void redissonTest() {
-        log.info("redisson整合：{}", redissonClient.toString());
+    public void methodTest() {
+        String articleUrl = "http://www.foretech.com.cn/list-66.html";
+        HttpResponse response = HttpRequest.get(articleUrl)
+                .execute();
+        log.info("静态解析——文章内容：\n{}", response.body());
     }
+
+    public static void main(String[] args) {
+
+        String str1 = new StringBuilder("58").append("tongcheng").toString();
+        System.out.println(str1);
+        System.out.println(str1.intern());
+        System.out.println(str1 == str1.intern());
+
+        System.out.println("------------");
+
+        String str2 = new StringBuilder("ja").append("va").toString();
+        System.out.println(str2);
+        System.out.println(str2.intern());
+        System.out.println(str2 == str2.intern());
+
+    }
+
+    static Object objectLockA = new Object();
+
+    public static void m1() {
+        new Thread(() -> {
+            synchronized (objectLockA) {
+                System.out.println(Thread.currentThread().getName() + "\t" + "------外层调用");
+                synchronized (objectLockA) {
+                    System.out.println(Thread.currentThread().getName() + "\t" + "------中层调用");
+                    synchronized (objectLockA) {
+                        System.out.println(Thread.currentThread().getName() + "\t" + "------内层调用");
+                    }
+                }
+            }
+        }, "t1").start();
+
+    }
+
 }

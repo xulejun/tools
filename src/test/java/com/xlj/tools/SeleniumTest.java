@@ -191,7 +191,7 @@ public class SeleniumTest {
         // 持续等待，直到扫码完成（扫码登录上去cookies的size=13）
         long waitTime = 1L;
         int waitCount = 1;
-        while (browser.manage().getCookies().size() < 13) {
+        while (browser.manage().getCookies().size() < 12) {
             TimeUnit.SECONDS.sleep(waitTime);
             log.info("等待时间：{} 秒", waitTime * waitCount);
             waitCount++;
