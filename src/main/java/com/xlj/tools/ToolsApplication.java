@@ -12,7 +12,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 /**
  * @author xlj
  */
-@EnableKafka
+//@EnableKafka
 @EnableRabbit   // 只是在监听消息时需要
 @SpringBootApplication
 @MapperScan("com.xlj.tools.dao")
