@@ -22,8 +22,8 @@ function getXpath(e) {
     if (typeof eId === 'object') { //取到表单元素的情况下 例如 [@id='[object HTMLInputElement]']
         eId = e.attributes.id.value;
     }
-    if (eId && !containsNum(eId)) return `//*[@id='${eId}']`;
-    if (e.tagName.toLowerCase() == 'body') return '//body';
+    // if (eId && !containsNum(eId)) return `//*[@id='${eId}']`;
+    if (e.tagName.toLowerCase() === 'body') return '//body';
     for (var t = 0,
              n = e.parentNode.childNodes,
              r = 0,
@@ -37,3 +37,7 @@ function getXpath(e) {
         1 == o.nodeType && o.tagName == e.tagName && t++
     }
 }
+
+// function containsNum(e){
+//     return /\d/.test(e);
+// }

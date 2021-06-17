@@ -9,73 +9,59 @@
 <body>
 <h1 align="center" style="color: blue">预登陆采集配置</h1>
 
-<!--预登陆页面-->
-<h2 align="center">1.预登陆页面</h2>
-<div class="viewport head" align="center">
-    <div class="navbar">
-        <div class="kd-nav">
-            <div class="kd-nav-top">
-      <span class="kd-top-attestation fl">
-        <a>中国证监会认证证券投资咨询机构(ZX0025)</a>
-      </span>
-                <div class="username">
-                    <div class="kd-safety fr">
-                        <div class="kd-top-account">
-                            <span class="f12">账号:</span>
-                            <input class="kd-account-input username" id="userName" name="loginName" autocomplete="off"
-                                   value="" readonly>
-                        </div>
-                        <div class="kd-top-password">
-                            <span class="f12">密码:</span>
-                            <input type="password" class="kd-password-input" name="password" autocomplete="off"
-                                   readonly>
-                        </div>
-                        <a href="javascript:;" class="kd-top-logon-btn f12 logonBtn inline">登录</a>
-                        <a id="get" class="kd-top-register-btn f12 inline">注册</a>
-                    </div>
+<iframe id="mainIframe" src="http://localhost:8080/preLoginPage" width="100%" height="300px"></iframe>
+
+<!--配置菜单-->
+<form action="collect" method="post" align="center">
+
+    <div id="advantageMenu" style="padding-bottom:20px;">
+        <h2>登录配置表单</h2>
+        <div class="row pagingBox" name="pagingBox">
+            <div class="form-group paging paging-4">
+                <div>
+                    账号输入框：<input type="text" class="form-control" name="userNameXpath" placeholder="账号输入框的xpath在此"
+                                 readonly>
+                    <button class="btn btn-small btn-primary" name="selectUserNameInput" type="button">选择账号输入框</button>
+                </div>
+                <br>
+                <div>
+                    密码输入框：<input type="text" class="form-control" name="passwordXpath" placeholder="密码输入框的xpath在此"
+                                 readonly>
+                    <button class="btn btn-small btn-primary" name="selectPasswordInput" type="button">选择密码输入框</button>
+                </div>
+                <br>
+                <div>
+                    登录按钮：<input type="text" class="form-control" name="loginXpath" placeholder="登录按钮的xpath在此" readonly>
+                    <button class="btn btn-small btn-primary" name="selectLoginBtn" type="button">选择登录按钮</button>
+                </div>
+                <br>
+                <div>
+                    用户名：<input type="text" name="userName" placeholder="请输入用户名">
+                </div>
+                <br>
+                <div>
+                    密码：<input type="text" name="password" placeholder="请输入密码">
+                </div>
+                <br>
+                <div>
+                    登录URL：<input type="text" name="loginUrl" placeholder="请输入登录URL">
+                </div>
+                <br>
+                <div>
+                    采集文章URL：<input type="text" name="articleUrl" placeholder="请输入采集文章URL">
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!--配置菜单-->
-<div id="advantageMenu" style="padding-bottom:20px;" align="center">
-    <h2>2.登录配置表单</h2>
-    <div class="row pagingBox" name="pagingBox">
-        <div class="form-group paging paging-4">
-            <div>
-                账号输入框：<input type="text" class="form-control" name="userNameXpath" placeholder="账号输入框的xpath在此" readonly>
-                <button class="btn btn-small btn-primary" name="selectUserNameInput" type="button">选择账号输入框</button>
-            </div>
-            <br>
-            <div>
-                密码输入框：<input type="text" class="form-control" name="passwordXpath" placeholder="密码输入框的xpath在此" readonly>
-                <button class="btn btn-small btn-primary" name="selectPasswordInput" type="button">选择密码输入框</button>
-            </div>
-            <br>
-            <div>
-                登录按钮：<input type="text" class="form-control" name="loginXpath" placeholder="登录按钮的xpath在此" readonly>
-                <button class="btn btn-small btn-primary" name="selectLoginBtn" type="button">选择登录按钮</button>
-            </div>
-            <br>
-            <div>
-                用户名：<input type="text" placeholder="请输入用户名">
-            </div>
-            <br>
-            <div>
-                密码：<input type="text" placeholder="请输入密码">
-            </div>
-        </div>
-    </div>
-
-</div>
+    <button type="submit">提交</button>
+</form>
 
 <script>
     // 用户名输入框xpath
     $("#advantageMenu [name=pagingBox] [name=selectUserNameInput]").click(function () {
         $("#advantageMenu").hide();
-        document.onclick = function (event) {
+        document.getElementById('mainIframe').contentWindow.document.onclick = function (event) {
             //获取xpath
             var path = getXpath(event.target);
             //清除点击事件
@@ -90,7 +76,7 @@
     // 密码输入框xpath
     $("#advantageMenu [name=pagingBox] [name=selectPasswordInput]").click(function () {
         $("#advantageMenu").hide();
-        document.onclick = function (event) {
+        document.getElementById('mainIframe').contentWindow.document.onclick = function (event) {
             //获取xpath
             var path = getXpath(event.target);
             //清除点击事件
@@ -105,7 +91,7 @@
     // 登录按钮xpath
     $("#advantageMenu [name=pagingBox] [name=selectLoginBtn]").click(function () {
         $("#advantageMenu").hide();
-        document.onclick = function (event) {
+        document.getElementById('mainIframe').contentWindow.document.onclick = function (event) {
             //获取xpath
             var path = getXpath(event.target);
             //清除点击事件

@@ -23,8 +23,14 @@
             <artifactId>selenium-java</artifactId>
             <version>3.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.ngoanh2n</groupId>
+            <artifactId>jsoup-xpath</artifactId>
+            <version>1.0.2</version>
+        </dependency>
 
         <!--        网页，请求-->
+
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>

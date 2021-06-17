@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -64,21 +65,18 @@ public class ToolsApplicationTests {
 
     }
 
-    static Object objectLockA = new Object();
-
-    public static void m1() {
-        new Thread(() -> {
-            synchronized (objectLockA) {
-                System.out.println(Thread.currentThread().getName() + "\t" + "------外层调用");
-                synchronized (objectLockA) {
-                    System.out.println(Thread.currentThread().getName() + "\t" + "------中层调用");
-                    synchronized (objectLockA) {
-                        System.out.println(Thread.currentThread().getName() + "\t" + "------内层调用");
-                    }
+    public int[] twoSum(int[] nums, int target) {
+        int[] result = new int[2];
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[i] + nums[j] == target) {
+                    result[0] = i;
+                    result[1] = j;
+                    break;
                 }
             }
-        }, "t1").start();
-
+        }
+        return result;
     }
 
 }
