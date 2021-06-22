@@ -43,10 +43,7 @@ public class ToolsApplicationTests {
 
     @Test
     public void methodTest() {
-        String articleUrl = "http://www.foretech.com.cn/list-66.html";
-        HttpResponse response = HttpRequest.get(articleUrl)
-                .execute();
-        log.info("静态解析——文章内容：\n{}", response.body());
+
     }
 
     public static void main(String[] args) {

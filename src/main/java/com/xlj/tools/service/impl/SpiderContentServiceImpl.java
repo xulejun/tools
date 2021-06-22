@@ -60,31 +60,23 @@ public class SpiderContentServiceImpl implements SpiderContentService {
         getBrowser();
         browser.get(preLogin.getLoginUrl());
         // 等待直到登录的xpath出现
-        new WebDriverWait(browser, 100, 1000)
+        new WebDriverWait(browser, 10, 1000)
                 .until(ExpectedConditions.visibilityOf(browser.findElement(By.xpath(preLogin.getLoginXpath()))));
         // Xpath校验
-        String suffix = "/..";
-        WebElement userNameElement = browser.findElementByXPath(preLogin.getUserNameXpath() + suffix);
-        if (!userNameElement.getText().contains("用户名") && !userNameElement.getText().contains("账号")) {
-//            log.warn("账号Xpath有误");
-            throw new Exception("账号Xpath有误");
-        }
-        WebElement passwordElement = browser.findElementByXPath(preLogin.getPasswordXpath() + suffix);
-        if (!passwordElement.getText().contains("密码")) {
-//            log.warn("密码Xpath有误");
-            throw new Exception("账号Xpath有误");
-        }
-        WebElement loginElement = browser.findElementByXPath(preLogin.getLoginXpath());
-        if (!loginElement.getText().contains("登录")) {
-//            log.warn("登录Xpath有误");
-            throw new Exception("账号Xpath有误");
-        }
+        checkXpath(preLogin);
         // 输入账号密码登录
         browser.findElementByXPath(preLogin.getUserNameXpath()).sendKeys(preLogin.getUserName());
         browser.findElementByXPath(preLogin.getPasswordXpath()).sendKeys(preLogin.getPassword());
         browser.findElementByXPath(preLogin.getLoginXpath()).click();
-        // 等待页面登录响应，todo 待完善
-        TimeUnit.SECONDS.sleep(5);
+        // 当前密码输入框不存在时，认为页面完成响应
+        new WebDriverWait(browser, 10, 1000)
+                .until(ExpectedConditions.invisibilityOf(browser.findElement(By.xpath(preLogin.getPasswordXpath()))));
+        TimeUnit.SECONDS.sleep(10);
+
+        // 当界面已经出现用户名，判断登录完毕
+        if (!browser.getPageSource().contains(preLogin.getUserName())) {
+            throw new Exception("登录失败，请核对配置信息");
+        }
         // 获取cookies
         StringBuilder cookies = new StringBuilder();
         browser.manage().getCookies().forEach(cookie -> {
@@ -93,5 +85,21 @@ public class SpiderContentServiceImpl implements SpiderContentService {
         log.info("获取到的cookies：{}", cookies);
         browser.quit();
         return cookies.toString();
+    }
+
+    private void checkXpath(PreLogin preLogin) throws Exception {
+        // 可在xpath后加/..获取父节点
+        WebElement userNameElement = browser.findElementByXPath(preLogin.getUserNameXpath());
+        if (!userNameElement.getTagName().contains("input")) {
+            throw new Exception("账号Xpath有误");
+        }
+        WebElement passwordElement = browser.findElementByXPath(preLogin.getPasswordXpath());
+        if (!passwordElement.getTagName().contains("input")) {
+            throw new Exception("密码Xpath有误");
+        }
+        WebElement loginElement = browser.findElementByXPath(preLogin.getLoginXpath());
+        if (!loginElement.getText().contains("登录") && !loginElement.getAttribute("value").contains("登录") && !loginElement.getAttribute("alt").contains("登录")) {
+            throw new Exception("登录Xpath有误");
+        }
     }
 }
