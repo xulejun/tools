@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
-@RabbitListener(queues = {"xlj-queue"})
+@RabbitListener(queues = {"xlj-queue1"})
 public class ReceiveMessage {
     /**
      * 接收消息的类型：Message，T<发送消息的实体类型>，Channel-当前传输数据的通道

@@ -6,11 +6,8 @@ import com.xlj.tools.bean.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,8 @@ public class SendMessageTest {
     private RabbitTemplate rabbitTemplate;
 
     private String exchange = "xlj-exchange";
-    private String routingKey = "xlj-routingKey";
+    private String routingKey = "xlj.routingKey";
+//    private String routingKey = "xlj.*";
     private String queue = "xlj-queue";
 
     /**

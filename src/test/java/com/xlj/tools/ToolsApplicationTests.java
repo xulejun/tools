@@ -5,10 +5,12 @@ import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.xlj.tools.bean.User;
+import com.xlj.tools.enums.InfoTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
@@ -18,10 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -43,23 +42,19 @@ public class ToolsApplicationTests {
 
     @Test
     public void methodTest() {
+        MyClass myClass = new MyClass(2);
+        MyClass myClass1 = new MyClass(2);
+        System.out.println(myClass == myClass1);
+    }
 
+    class MyClass {
+        int value;
+
+        public MyClass(int value) {
+        }
     }
 
     public static void main(String[] args) {
-
-        String str1 = new StringBuilder("58").append("tongcheng").toString();
-        System.out.println(str1);
-        System.out.println(str1.intern());
-        System.out.println(str1 == str1.intern());
-
-        System.out.println("------------");
-
-        String str2 = new StringBuilder("ja").append("va").toString();
-        System.out.println(str2);
-        System.out.println(str2.intern());
-        System.out.println(str2 == str2.intern());
-
     }
 
     public int[] twoSum(int[] nums, int target) {
