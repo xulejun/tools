@@ -31,7 +31,12 @@ public class XssController {
 
     /**
      * 实体类
-     *
+     * postman：Body——》raw——》
+     {
+          "id":"1",
+          "name":"<script>alert(1);</script>"
+     }
+
      * @param user
      * @return
      */
