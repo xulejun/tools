@@ -8,11 +8,13 @@ import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author xlj
  */
 //@EnableKafka
+@EnableAsync    // 开启异步
 @EnableRabbit   // 只是在监听消息时需要
 @SpringBootApplication
 @MapperScan("com.xlj.tools.dao")
