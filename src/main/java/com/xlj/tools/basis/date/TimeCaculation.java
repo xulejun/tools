@@ -61,4 +61,16 @@ public class TimeCaculation {
         System.out.println("总分钟：" + minute);
         System.out.println("总秒：" + second);
     }
+
+    /**
+     * 计算昨天的日期
+     */
+    public static String yesterday() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        Date time = calendar.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(time);
+    }
+
 }

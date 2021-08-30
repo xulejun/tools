@@ -36,5 +36,8 @@ public class StreamDemo {
 //            return t.getId();
 //        }).limit(1).collect(Collectors.toList()));
 
+        // reduce 计算集合总数
+        Integer sum = list.stream().map(PersonBo::getId).reduce(Integer::sum).get();
+        System.out.println(sum);
     }
 }
