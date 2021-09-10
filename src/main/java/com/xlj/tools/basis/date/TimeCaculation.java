@@ -1,10 +1,19 @@
 package com.xlj.tools.basis.date;
 
+import com.google.common.collect.Lists;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * 时间计算
@@ -71,6 +80,19 @@ public class TimeCaculation {
         Date time = calendar.getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(time);
+    }
+
+    /**
+     * 计算两个时间范围内的区间
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
+        long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate);
+        return IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween)
+                .mapToObj(startDate::plusDays).collect(Collectors.toList());
     }
 
 }
