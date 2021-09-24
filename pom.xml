@@ -58,6 +58,13 @@
             <artifactId>redisson</artifactId>
             <version>3.15.5</version>
         </dependency>
+        <!-- jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
 
         <!--        邮件-->
         <dependency>
