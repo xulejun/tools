@@ -1,27 +1,32 @@
 package com.xlj.tools.basis.juc;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * ReadWriteLock读写锁
+ * ReadWriteLock读写锁：
+ * 多个线程可以同时读一个资源类，但是一个线程实现写共享资源类，不可再有其他线程对该资源进行读写
+ * 总结：读读共存，读写不共存，写写不共存
  *
  * @author xlj
  * @date 2020/10/23 23:13
  */
 class MyCache {
-    private Map map = new HashMap();
-    // 创建读写锁
+    private Map<String, String> map = Maps.newHashMap();
+    /**
+     * 创建读写锁
+     */
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     /**
-    * @description 写操作
-    * @author xlj
-    * @date 2020/11/9 22:14
-    */
+     * @description 写操作
+     * @author xlj
+     * @date 2020/11/9 22:14
+     */
     public void put(String key, String value) {
         readWriteLock.writeLock().lock();
         try {
@@ -37,10 +42,10 @@ class MyCache {
     }
 
     /**
-    * @description 读操作
-    * @author xlj
-    * @date 2020/11/9 22:14
-    */
+     * @description 读操作
+     * @author xlj
+     * @date 2020/11/9 22:14
+     */
     public void get(String key) {
         readWriteLock.readLock().lock();
         try {
