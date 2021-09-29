@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /**
  * @author xlj
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync    // 开启异步
 @EnableRabbit   // 只是在监听消息时需要
 @SpringBootApplication
+@EnableRedisHttpSession     // 整合Redis作为session存储
 @MapperScan("com.xlj.tools.dao")
 //@PropertySource(value = {"classpath:kafka.properties"}, encoding = "UTF-8")     // 导入配置文件，与@Value结合使用，取值
 //@ImportResource(locations = "classpath:kafka.properties")       // 加载配置文件
