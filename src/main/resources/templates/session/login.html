@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>session登录会话保持</title>
@@ -7,11 +7,11 @@
 <body>
 
 <div style="margin:0px auto; width:500px" align="center">
-    <form action="/doLogin" method="post">
+    <form action="/session/doLogin" method="post">
         账号: <input name="username"/> <br/>
         密码: <input name="password" type="password"/> <br/>
-        <br>
-        <button type="submit">提交</button>
+        <input type="hidden" name="path" th:value="${path}">
+        <input type="submit" value="登录"/>
     </form>
 </div>
 
