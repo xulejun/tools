@@ -30,7 +30,7 @@ public class SessionConfig {
     }
 
     /**
-     * 存放redis-session序列化问题
+     * 存放redis-session序列化问题，方法名不可改，否则失效
      *
      * @return
      */
