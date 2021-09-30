@@ -5,7 +5,7 @@
     <title>登录后查看员工列表</title>
 </head>
 <body>
-<h1>欢迎：【<span th:text="${username}"></span>】 </h1>
+<h1>欢迎：【<span th:text="${session.loginUser}"></span>】 </h1>
 <ul th:each="name : ${list}">
     <li th:text="${name}"></li>
 </ul>
