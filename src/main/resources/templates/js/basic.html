@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript测试</title>
+
+</head>
+<body>
+<p id="test">做个测试</p>
+<p onclick="changeStyle()" id="style">点击文本可以改变样式</p>
+<span id="demo">js能改变文本的内容</span>
+<button type="button" onclick="changeText()">点击这里改变文本内容</button>
+<br>
+<p>请输入需要校验的数字
+<p/>
+<input id="check" type="text" width="100">
+<button type="button" onclick="checkNum()">点击校验数字</button>
+从JS对象中获取的名字为：<span id="name"></span>
+<p id="demo1"></p>
+<p id="demo2"></p>
+点击按钮，调用传参的函数
+<button id="button1" type="button" onclick="params('xlj',15)">点击调用函数</button>
+<br>
+<button id="button2" onclick="document.getElementById('button2').innerHTML=Date()">点击这里获取当前时间</button>
+转义换行：<p id="p1"></p>
+</body>
+
+<script>
+    var array = ["apple", "banana", "orange"];
+    document.write("判断是否为数组：" + array.constructor.toString()+"<br>");
+    var x = "It\'s my dog";
+    var y = "Its name is \"twelve\"";
+    document.getElementById("p1").innerHTML = x + "<br>" + y;
+
+    var people = {
+        name: "xlj", age: 15,
+        getInfo: function () {
+            return this.age + "-" + this.name;
+        }
+    };
+    document.write("这是for循环遍历对象属性的值：");
+    for (let peopleKey in people) {
+        document.write(peopleKey + "<br>");
+    }
+    var a = "hello";
+    var b = new String("hello");
+    document.write("== 和 === 的区别（==比较值，===还比较数据类型）：");
+    document.write((a == b) + "&nbsp" + (a === b));
+    document.write("<h1>这是Js脚本所生成的文字<h1/>");
+    document.write("这是JS生成的时间：" + Date());
+    // 通过对象传值
+    document.getElementById("name").innerHTML = people.name;
+    document.getElementById("demo1").innerHTML = "不加括号输出的函数表达式（返回函数的定义）：" + people.getInfo;
+    document.getElementById("demo2").innerHTML = "加括号输出的函数表达式（返回值）：" + people.getInfo();
+    // alert("hello");
+    // window.alert("world");
+    function params(name, age) {
+        alert(name + ":" + age);
+    }
+
+    function changeText() {
+        let element = document.getElementById("demo");
+        element = document.write("<h1>改变后的内容<h1/>")     // 改变内容
+    }
+
+    function changeStyle() {
+        let element = document.getElementById("style");
+        element.style.color = "red";
+    }
+
+    function checkNum() {
+        let element = document.getElementById("check").value;
+        if (element === "" || isNaN(element)) {
+            alert(element + "不是数字");
+        }
+    }
+</script>
+</html>
