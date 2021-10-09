@@ -6,28 +6,50 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSON;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Maps;
 import com.xlj.tools.bean.User;
 import com.xlj.tools.enums.InfoTypeEnum;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
 import org.redisson.api.RedissonClient;
+import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LoggerFactoryBinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Slf4j
 //@SpringBootTest
 public class ToolsApplicationTests {
     @Autowired
     RedissonClient redissonClient;
+
 
     @Test
     void contextLoads() throws IOException {
@@ -44,17 +66,59 @@ public class ToolsApplicationTests {
     public void methodTest() {
         MyClass myClass = new MyClass(2);
         MyClass myClass1 = new MyClass(2);
-        System.out.println(myClass == myClass1);
+//        System.out.println(myClass == myClass1);
+//        String name = this.getClass().getSimpleName();
+//        System.out.println(name);
+        myClass.className();
     }
+
 
     class MyClass {
         int value;
 
         public MyClass(int value) {
         }
+
+        public void className() {
+            System.out.println(this.getClass().getSimpleName());
+        }
     }
 
-    public static void main(String[] args) {
+    public static void hello(String a) {
+        System.out.println("hello：" + a);
+    }
+
+    public static void hello(String a, String b) {
+        System.out.println("hello：" + a + "hello:" + b);
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("shard(\\d+)db");
+        System.out.println(":");
+    }
+
+
+    private static List<String> dateInterval(String start, String end) {
+        String[] startDateArr = start.split("-");
+        String[] endDateArr = end.split("-");
+        // 设置开始日期
+        LocalDate startDate = LocalDate.of(Integer.parseInt(startDateArr[0]), Integer.parseInt(startDateArr[1]), Integer.parseInt(startDateArr[2]));
+        // 结束日期
+        LocalDate endDate = LocalDate.of(Integer.parseInt(endDateArr[0]), Integer.parseInt(endDateArr[1]), Integer.parseInt(endDateArr[2]));
+        // 获取时间区间
+        long betweenDays = ChronoUnit.DAYS.between(startDate, endDate);
+        List<LocalDate> dateList = IntStream.iterate(0, i -> i + 1).limit(betweenDays + 1)
+                .mapToObj(startDate::plusDays).collect(Collectors.toList());
+
+        return dateList.stream().map(LocalDate::toString).collect(Collectors.toList());
+    }
+
+
+    public static void updateString(String str) {
+        if (StrUtil.isBlank(str)) {
+            str = "hello";
+        }
     }
 
     public int[] twoSum(int[] nums, int target) {
