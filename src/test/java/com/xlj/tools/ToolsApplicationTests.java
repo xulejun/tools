@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSON;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
@@ -14,7 +15,6 @@ import com.xlj.tools.enums.InfoTypeEnum;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
@@ -95,8 +95,10 @@ public class ToolsApplicationTests {
 
 
     public static void main(String[] args) throws Exception {
-        System.out.println("shard(\\d+)db");
-        System.out.println(":");
+        long timeMillis = System.currentTimeMillis();
+        System.out.println(timeMillis);
+        long l = timeMillis / 1000;
+        System.out.println(l);
     }
 
 

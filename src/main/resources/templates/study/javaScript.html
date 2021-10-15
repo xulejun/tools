@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript测试</title>
+    <script type="javascript" src="js/jquery.min.js"></script>
+</head>
+<body>
+<p id="test">做个测试</p>
+<p onclick="changeStyle()" id="style">点击文本可以改变样式</p>
+<span id="demo">js能改变文本的内容</span>
+<button type="button" onclick="changeText()">点击这里改变文本内容</button>
+<br>
+<p>请输入需要校验的数字
+<p/>
+<input id="check" type="text" width="100">
+<button type="button" onclick="checkNum()">点击校验数字</button>
+从JS对象中获取的名字为：<span id="name"></span>
+<p id="demo1"></p>
+<p id="demo2"></p>
+点击按钮，调用传参的函数
+<button id="button1" type="button" onclick="params('xlj',15)">点击调用函数</button>
+<br>
+<button id="button2" onclick="document.getElementById('button2').innerHTML=Date()">点击这里获取当前时间</button>
+转义换行：<p id="p1"></p>
+<p>字符串转Json：<span id="p2"></span></p>
+回调函数等待3秒之后执行:
+<p id="p3"></p>
+<p id="p4"></p>
+<input name="button" type="button" onclick="rec()" value="点击弹出对话框"/>
+<ul class="fruit">
+    <li>苹果</li>
+    <li>橘子</li>
+    <li>香蕉</li>
+</ul>
+<p>arguments.length 属性所返回函数接收到参数的个数：<span id="p5"></span></p>
+<p id="p6"></p>
+<p>箭头函数的用法：<span id="p7"></span></p>
+<p>闭包实现的数累加：
+    <button id="close" type="button" onclick="closeP()">点击计数</button>
+    <span id="span1"></span></p>
+onchange()函数用法——请输入你的英文名字：<input onchange="f9()" type="text" id="input1"><br>
+鼠标移入移出事件：
+<div id="div1" style="height: 120px;width: 120px;background-color: red" onmouseover="over(this)"
+     onmouseout="out()"></div>
+鼠标点击和释放事件：
+<div id="div2" style="height: 120px;width: 120px;background-color: red" onmousedown="down(this)" onmouseup="up()"></div>
+按钮中添加监听事件：
+<button type="button" id="button3">点击显示日期</button>
+<p id="p10"></p>
+<h1>-----------------以下为JS生成的内容------------------------</h1>
+</body>
+
+<script>
+    // 添加监听事件
+    document.getElementById("button3").addEventListener("click", display);
+
+    function display() {
+        document.getElementById("p10").innerHTML = Date();
+    }
+
+    // 鼠标点击和释放事件
+    function down(object) {
+        object.style.backgroundColor = 'blue';
+    }
+
+    function up() {
+        document.getElementById("div2").style.backgroundColor = 'black';
+    }
+
+    // 鼠标移入移出事件
+    function over(object) {
+        object.style.backgroundColor = 'blue';
+    }
+
+    function out() {
+        document.getElementById("div1").style.backgroundColor = 'black';
+    }
+
+    // onchange事件：当用户改变输入字段内容时触发
+    function f9() {
+        let value = document.getElementById("input1");
+        value.value = value.value.toUpperCase();
+    }
+
+    // 闭包：函数 + 函数内部访问局部变量（保护私有变量不受外界干扰）
+    var close = (function () {
+        var a = 0;
+        return function f8() {
+            return a++;
+        }
+
+    })();
+
+    function closeP() {
+        document.getElementById("span1").innerHTML = close();
+    }
+
+    // 内嵌函数：函数中嵌套函数，访问父级变量
+    function f6() {
+        var a = 10;
+
+        function f7() {
+            a += 1;
+        }
+
+        f7();
+        return a;
+    }
+
+    // 构造函数的声明
+    function f5(arg1, arg2) {
+        this.id = arg1;
+        this.name = arg2;
+    }
+
+    var x = new f5(1, "xlj");
+    console.log(x.id);
+
+    // 自带参数
+    function f4(x, y = 10) {
+        return x + y;
+    }
+
+    f4(1);
+
+    // 默认参数
+    function f3(x, y) {
+        // 如果y已经定义，y||返回y（因为y是true），否则返回0
+        y = y || 0;
+        return y;
+    }
+
+    console.log(f3(1));
+
+    // 箭头函数的用法，注：箭头函数不可提升
+    function f2(a, b) {
+        return a * b;
+    }
+
+    document.getElementById("p7").innerHTML = f2(1, 2);
+    let fu = (x, y) => x * y;
+    document.getElementById("p7").innerHTML = fu(1, 2);
+
+    // 函数调用toString()方法作为字符串返回（f1.toString 等同于 f1）
+    function f1(a, b) {
+        return a * b;
+    }
+
+    document.getElementById("p6").innerHTML = f1.toString();
+
+    // 函数接收到的参数个数
+    function f(a, b) {
+        return arguments.length;
+    }
+
+    document.getElementById("p5").innerHTML = f(1, 2);
+
+    // 获取ul列表中的最后一个元素
+    let fruit = document.getElementsByClassName("fruit");
+    let nodes = fruit[0].childNodes;
+    let lastText = nodes[nodes.length - 2].innerText;
+    console.log(lastText);
+
+    // 点击按钮二次确认
+    function rec() {
+        let message = confirm("Do you love JavaScript?");
+        if (message) {
+            console.log(message);
+            document.write("good job");
+        }
+    }
+
+    // 函数提升：在函数声明前调用
+    // 匿名自调用函数
+    (function () {
+        console.log("hello，我是自调用函数");
+    })();
+
+    // promise用法
+    new Promise(function (resolve, reject) {
+        console.log(111);
+        resolve(222);
+    }).then(function (value) {
+        return 333
+    }).then(function (value) {
+        console.log(value);
+        throw "An error";
+    }).catch(function (err) {
+        console.log(err);
+    });
+
+    // 原生JS异步请求接口
+    // let request = new XMLHttpRequest();
+    // request.open("GET", "http://www.baidu.com", true);
+    // request.send();
+    // // 成功
+    // request.onload = function () {
+    //     document.getElementById("p4").innerHTML = request.responseText;
+    // };
+    // // 失败
+    // request.onerror = function () {
+    //     document.getElementById("p4").innerHTML = "请求失败";
+    // };
+
+    // 延迟回调函数
+    setTimeout(function () {
+        document.getElementById("p3").innerHTML = "3秒后才执行的回调函数";
+    }, 3000);
+    // 字符串转Json
+    var text = '{ "sites" : [' +
+        '{ "name":"Runoob" , "url":"www.runoob.com" },' +
+        '{ "name":"Google" , "url":"www.google.com" },' +
+        '{ "name":"Taobao" , "url":"www.taobao.com" } ]}';
+    obj = JSON.parse(text);
+    document.getElementById("p2").innerHTML = obj.sites[1].name + "-" + obj.sites[1].url;
+
+    var array = ["apple", "banana", "orange"];
+    document.write("判断是否为数组：" + array.constructor.toString() + "<br>");
+    var x = "It\'s my dog";
+    var y = "Its name is \"twelve\"";
+    document.getElementById("p1").innerHTML = x + "<br>" + y;
+
+    var people = {
+        name: "xlj", age: 15,
+        getInfo: function () {
+            return this.age + "-" + this.name;
+        }
+    };
+    document.write("这是for循环遍历对象属性的值：");
+    for (let peopleKey in people) {
+        document.write(peopleKey + "<br>");
+    }
+    var a = "hello";
+    var b = new String("hello");
+    document.write("== 和 === 的区别（==比较值，===还比较数据类型）：");
+    document.write((a == b) + "&nbsp" + (a === b));
+    document.write("<h1>这是Js脚本所生成的文字<h1/>");
+    document.write("这是JS生成的时间：" + Date());
+    // 通过对象传值
+    document.getElementById("name").innerHTML = people.name;
+    document.getElementById("demo1").innerHTML = "不加括号输出的函数表达式（返回函数的定义）：" + people.getInfo;
+    document.getElementById("demo2").innerHTML = "加括号输出的函数表达式（返回值）：" + people.getInfo();
+    // alert("hello");
+    // window.alert("world");
+    function params(name, age) {
+        alert(name + ":" + age);
+    }
+
+    function changeText() {
+        let element = document.getElementById("demo");
+        element = document.write("<h1>改变后的内容<h1/>")     // 改变内容
+    }
+
+    function changeStyle() {
+        let element = document.getElementById("style");
+        element.style.color = "red";
+    }
+
+    function checkNum() {
+        let element = document.getElementById("check").value;
+        if (element === "" || isNaN(element)) {
+            alert(element + "不是数字");
+        }
+    }
+</script>
+</html>
