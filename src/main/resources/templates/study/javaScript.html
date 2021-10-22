@@ -5,7 +5,7 @@
     <title>JavaScript测试</title>
     <script type="javascript" src="js/jquery.min.js"></script>
 </head>
-<body>
+<body onload="startTime()">
 <p id="test">做个测试</p>
 <p onclick="changeStyle()" id="style">点击文本可以改变样式</p>
 <span id="demo">js能改变文本的内容</span>
@@ -48,11 +48,163 @@ onchange()函数用法——请输入你的英文名字：<input onchange="f9()"
 按钮中添加监听事件：
 <button type="button" id="button3">点击显示日期</button>
 <p id="p10"></p>
+<div id="div3"></div>
+<div id="div4"></div>
+<button type="button" onclick="confirmFrame()">confirm确认框</button>
+<button type="button" onclick="promptFrame()">prompt确认框</button>
+<p>1s后运行setInterval计时函数</p>
+<div id="div5"></div>
+<button type="button" onclick="f7()">点击停止setInterval计时事件</button>
+<p id="he">hello</p>
+<p>hello1</p>
+<p>hello2</p>
+<p>hello3</p>
+<p>hello4</p>
+
 <h1>-----------------以下为JS生成的内容------------------------</h1>
 </body>
 
 <script>
-    // 添加监听事件
+    // 回调函数：一种参数形式传递给另一个函数的函数
+
+    // cookie操作
+    // 创建cookie（用户名，过期时间，路径）
+    document.cookie = "username=xlj;expires=Thu, 18 Dec 2043 12:00:00 GMT;path=/";
+    // 修改cookie，直接创建新值旧的会被覆盖
+    document.cookie = "username=jyj;expires=Thu, 18 Dec 2043 12:00:00 GMT;path=/";
+    // 删除cookie，用之前的过期时间，即可删除
+    document.cookie = "username=jyj;expires=Thu, 18 Dec 1970 12:00:00 GMT;path=/";
+
+    document.getElementsByTagName("p").setAttribute("onclick", "hide()");
+
+    function hide() {
+        this.hide();
+    }
+
+    // 计时事件：setInterval 不间断执行函数
+    let interval = setInterval(function () {
+        f10();
+    }, 1000);
+
+    function f10() {
+        let date2 = new Date();
+        let dateString = date2.toLocaleTimeString();
+        document.getElementById("div5").innerHTML = dateString;
+    }
+
+    // 停止计时事件
+    function f7() {
+        clearInterval(interval);
+    }
+
+    // 弹框方式
+    // window.alert("alert警告框");
+    function confirmFrame() {
+        let b = confirm("这是confirm确认弹框");
+        if (b) {
+            console.log("确认");
+        } else {
+            console.log("取消");
+        }
+    }
+
+    function promptFrame() {
+        let prompt1 = prompt("请输入您的名字", "XLJ");
+        if (prompt1 !== null && prompt1 !== "") {
+            alert("Hello！" + prompt1);
+        }
+    }
+
+    // window对象：后退 | 前进
+    function back() {
+        history.back();
+    }
+
+    function forward() {
+        history.forward();
+    }
+
+    // 正则表达式匹配
+    let str = "hello World,world,world";
+    // i 表示不区分大小写
+    let req = /world/i;
+    console.log(str.match(req));
+    // g 表示全文匹配，不止匹配一次
+    let req1 = /world/g;
+    console.log(str.match(req1));
+    // 合并
+    let req2 = /world/ig;
+    console.log(str.match(req2));
+
+    // 时间展示
+    function startTime() {
+        let today = new Date();
+        let hours = today.getHours();
+        let minutes = today.getMinutes();
+        let seconds = today.getSeconds();
+        let m = checkTime(minutes);
+        let s = checkTime(seconds);
+        document.getElementById("div4").innerHTML = hours + ":" + m + ":" + s;
+        setTimeout(function () {
+            startTime()
+        }, 500);
+    }
+
+    function checkTime(num) {
+        if (num < 10) {
+            return num = "0" + num;
+        }
+        return num;
+    }
+
+    // 日期对象
+    let date = new Date();
+    // 可设置日期
+    let datePlus = date.setFullYear(2021, 5, 6);
+    let datePlus1 = date + 5;
+    let date1 = new Date();
+    console.log(date1);
+    console.log(datePlus);
+    console.log(datePlus1);
+    // 日期对象之间可作比较
+    if (date1 > datePlus) {
+        console.log(datePlus);
+    }
+
+    // 字符串匹配
+    let hello1 = "hello1";
+    if (hello1.match("e")) {
+        console.log("hello");
+    }
+    // 数字对象：无穷大-Infinity
+    let num = 2;
+    if (num !== Infinity) {
+        console.log(num);
+    }
+    // 数字对象：非数字值-isNaN
+    if (isNaN(num)) {
+        console.log(num);
+    }
+
+    // prototype对象可添加对象属性和方法
+    function Person(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    Person.prototype.age = 16;
+    Person.prototype.getAge = function () {
+        return this.age;
+    };
+
+    // DOM 创建节点元素
+    let element = document.createElement("p");
+    let node = document.createTextNode("这是元素节点创建的标签内容");
+    element.appendChild(node);
+    document.getElementById("div3").appendChild(element);
+    // element.remove();
+
+    // 添加监听事件句柄
     document.getElementById("button3").addEventListener("click", display);
 
     function display() {
@@ -190,13 +342,21 @@ onchange()函数用法——请输入你的英文名字：<input onchange="f9()"
         console.log(err);
     });
 
-    // 原生JS异步请求接口
-    // let request = new XMLHttpRequest();
+    // 原生JS异步AJAX请求接口
+    let request = new XMLHttpRequest();
+    // 接口调用状态发生改变时执行函数（0: 请求未初始化；1: 服务器连接已建立；2: 请求已接收；3: 请求处理中；4: 请求已完成，且响应已就绪）
+    request.onreadystatechange = function () {
+        if (request.status === 200 && request.readyState === 4) {
+            console.log("AJAX请求准备就绪");
+        }
+    };
     // request.open("GET", "http://www.baidu.com", true);
     // request.send();
     // // 成功
     // request.onload = function () {
     //     document.getElementById("p4").innerHTML = request.responseText;
+    // 以XML的形式返回
+    // document.getElementById("p4").innerHTML = request.responseXML;
     // };
     // // 失败
     // request.onerror = function () {
