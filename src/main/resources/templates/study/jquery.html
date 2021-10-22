@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery学习</title>
+    <script src="https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<body>
+<p>点就消失1</p>
+<p>点就消失2</p>
+<p>点就消失3</p>
+<p id="hello">点就消失4</p>
+<p class="hello">点就消失5</p>
+
+<button id="button1">点我调用回调函数</button>
+<p id="p1">点击按钮后我在1s后消失，调用回调函数</p>
+<button id="button2">点我调用toggle隐藏和显示切换</button>
+<p id="p2">点我调用toggle隐藏和显示切换</p>
+
+<button id="button3">点我调用fadeIn元素淡入</button>
+<div id="div1" style="background-color: red;display: none;height: 50px;width: 50px"></div>
+<br>
+<div id="div2" style="background-color: black;display: none;height: 50px;width: 50px"></div>
+<br>
+<div id="div3" style="background-color: blue;display: none;height: 50px;width: 50px"></div>
+<br>
+<button id="button4">点我开启动画</button>
+<br>
+<!--样式需要加上position，否则元素会有自己固定的位置，无法实现动画效果-->
+<div id="div4" style="background-color: green;height: 50px;width: 50px;position: absolute"></div>
+<br>
+</body>
+
+<script>
+    // 动画
+    $("#button4").click(function () {
+        // $("#div4").animate({left: '250px'});
+        $("#div4").animate({left: '250px', height: '150px', width: '150px'});   // 可以设置多个属性
+    });
+
+    // 效果：fadeIn（元素淡入）；fadeOut（元素淡出）；fadeToggle（两者来回切换）；fadeTo（给定不透明度）
+    // slideDown（元素向下滑动）；slideUp（向上滑动）；slideToggle（来回切换）
+    $("#button3").click(function () {
+        $("#div1").fadeIn();
+        $("#div2").fadeIn("slow");
+        $("#div3").fadeIn(3000);
+    });
+
+    // document ready 为了防止文档在完全加载之间运行JQ代码
+    // $(document).ready(function () {
+    //     $("p").click(function () {
+    //         $(this).hide();
+    //     })
+    // });
+
+    // 以上代码等同于
+    $(function () {
+        // 事件：dbclick（双击事件）；mouseenter（鼠标指针穿过）；mouseleave（鼠标指针离开）；
+        // mousedown（移动上方，按下鼠标键）；mouseup（鼠标键松开）；hover（光标悬停）
+        // focus（元素获取焦点）；blur（失去焦点）；toggle（show / hide 来回切换）
+        $("p").click(function () {
+            $("#hello").hide();     // id选择器
+            $(".hello").hide(1000);     // 类选择器——hide(1000)【1s后逐渐消失】
+            $(this).hide();
+            $(".hello").show();     // 类选择器
+        })
+    });
+
+    // 回调函数
+    $("#button1").click(function () {
+        $("#p1").hide(1000, function () {
+            alert("完成");
+        })
+    });
+    // 来回切换
+    $("#button2").click(function () {
+        $("#p1").toggle()
+    });
+
+</script>
+</html>
