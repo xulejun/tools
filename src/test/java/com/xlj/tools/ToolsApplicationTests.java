@@ -9,6 +9,7 @@ import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.xlj.tools.bean.User;
 import com.xlj.tools.enums.InfoTypeEnum;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -38,6 +40,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
@@ -49,6 +52,9 @@ import java.util.stream.IntStream;
 public class ToolsApplicationTests {
     @Autowired
     RedissonClient redissonClient;
+
+    private static int a = 1;
+    private static int b = 2;
 
 
     @Test
@@ -95,10 +101,16 @@ public class ToolsApplicationTests {
 
 
     public static void main(String[] args) throws Exception {
-        long timeMillis = System.currentTimeMillis();
-        System.out.println(timeMillis);
-        long l = timeMillis / 1000;
-        System.out.println(l);
+        List<User> list = Lists.newArrayList();
+        a(list);
+        list.forEach(System.out::println);
+    }
+
+    public static void a(List<User> list) {
+        for (int i = 0; i < 3; i++) {
+            User xlj = new User(i, "xlj");
+            list.add(xlj);
+        }
     }
 
 
