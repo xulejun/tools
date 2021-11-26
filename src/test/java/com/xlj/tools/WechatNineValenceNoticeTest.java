@@ -3,16 +3,21 @@ package com.xlj.tools;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Maps;
+import com.xlj.tools.wechat.WechatArticleBean;
+import com.xlj.tools.wechat.WechatList;
+import com.xlj.tools.wechat.WechatLogin;
 import com.xlj.tools.wechat.ninevalence.WechatNineValenceNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +32,9 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WechatNineValenceNoticeTest {
+    @Value("${wechat.cookie}")
+    private String cookie;
+
     @Autowired
     private WechatNineValenceNotice nineValenceNotice;
     /**
@@ -36,6 +44,7 @@ public class WechatNineValenceNoticeTest {
 
     static {
         timeRange.put("07:55:00", "08:01:00");
+        timeRange.put("10:55:00", "11:01:00");
         timeRange.put("12:00:00", "12:31:00");
         timeRange.put("16:30:00", "17:01:00");
         timeRange.put("18:55:00", "19:01:00");
@@ -70,5 +79,18 @@ public class WechatNineValenceNoticeTest {
             }
             TimeUnit.SECONDS.sleep(RandomUtil.randomLong(1, 5));
         }
+    }
+
+    /**
+     * 测试cookie 有效性
+     */
+    @Test
+    public void testCookie() throws Exception {
+        String queryAccount = "公园接种";
+        String token = WechatLogin.getToken(cookie);
+        String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
+        List<WechatArticleBean> list = WechatList.getWeixinArticleList(token, fakeId, 1);
+        list.forEach(System.out::println);
+//        System.out.println(fakeId);
     }
 }

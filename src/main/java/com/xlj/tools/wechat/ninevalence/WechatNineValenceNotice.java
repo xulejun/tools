@@ -36,6 +36,9 @@ import static com.xlj.tools.wechat.WxApiCode.FREQ_CONTROL;
 @Slf4j
 @Component
 public class WechatNineValenceNotice {
+    @Value("${wechat.cookie}")
+    private String cookie;
+
     @Value("${spring.mail.username}")
     private String sendName;
     @Autowired
@@ -56,12 +59,12 @@ public class WechatNineValenceNotice {
     }
 
     public void notice() throws InterruptedException {
-        // 登录信息
-        String cookie = "ua_id=sPMMLyRsAXqM9riSAAAAAPabd_hsYeGu_gnTzZ7xtzs=;rand_info=CAESIBtm8zG5C7sywQ1czwkAk6RxO+hIO9WhlJ8Lf0fClZpV;xid=8f70d816c289d4440027c7905f335c24;data_bizuin=3214367260;slave_bizuin=3214367260;slave_sid=bWppSmpQaHNjbFZCa19UOFc0bkJ6YjNJbTkzcFN5dnpId21rbzBkeUhnc3V5ekxoc3VhVmZtekpqU3lKMXhjY1NCbVhwZ0VrNHFhUUhIRzdDZU9PdkV4ak10V0hpSF9malEyNjF2OG96ckVjcFBqdDNOd0VVa0NlWUZ1aHFhNmlMd2gwNVZLMDljb0ViQWdw;data_ticket=auE8A3CerI3Gr2DVLrvzdqNwdNLGIc//FrqWXJ1dnSRuUU+ZkUJsNTPIzWcgVC2T;mm_lang=zh_CN;slave_user=gh_7383a0de3d89;bizuin=3214367260;wxuin=37818771922978;uuid=118e6fe0cfb46c5049cb7e3f3cf9a1cf;";
         JSONArray articleJsonArray = null;
 
         for (String queryAccount : queryAccountList) {
+            String responseStatus;
             try {
+                // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
 
@@ -79,7 +82,8 @@ public class WechatNineValenceNotice {
                 JSONObject resultJson = JSONUtil.parseObj(result);
 
                 // 响应结果校验
-                String responseStatus = resultJson.getByPath("base_resp.ret", String.class);
+                responseStatus = resultJson.getByPath("base_resp.ret", String.class);
+
                 if (FREQ_CONTROL.equals(responseStatus)) {
                     log.warn("账号已经被限流");
                     return;
@@ -94,19 +98,19 @@ public class WechatNineValenceNotice {
                 return;
             }
             // 数据处理
-            dealData(articleJsonArray);
+            dealData(articleJsonArray, responseStatus);
             // 随机睡眠，保证账号安全
             TimeUnit.SECONDS.sleep(RandomUtil.randomLong(10, 30));
         }
     }
 
-    private void dealData(JSONArray articleJsonArray) {
+    private void dealData(JSONArray articleJsonArray, String responseStatus) {
         JSONObject article = articleJsonArray.getJSONObject(0);
         String title = article.getStr("title");
         String articleUrl = article.getStr("link");
         long articleTime = article.getLong("update_time") * 1000;
         String setNineValenceArticleUrlKey = "nineValence.articleUrl";
-        log.info("文章标题={}，文章链接={}", title, articleUrl);
+        log.info("响应状态码={}，文章标题={}，文章链接={}", title, articleUrl, responseStatus);
         // 文章标题 含有 九价 ，并且 redis 中不存在数据
         boolean isNeed = title.contains("九价") && (!redisTemplate.opsForSet().isMember(setNineValenceArticleUrlKey, articleUrl));
 
