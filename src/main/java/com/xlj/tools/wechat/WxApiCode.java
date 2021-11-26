@@ -1,6 +1,8 @@
 package com.xlj.tools.wechat;
 
 /**
+ * 微信采集响应状态码
+ *
  * @author xlj
  * @date 2021/4/26
  */

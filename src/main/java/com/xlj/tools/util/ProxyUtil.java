@@ -21,7 +21,7 @@ import java.util.Map;
  * @date 2021/11/9
  */
 @Slf4j
-@Component
+//@Component
 public class ProxyUtil {
     private RestTemplate restTemplate;
 

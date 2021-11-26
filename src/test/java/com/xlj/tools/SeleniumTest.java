@@ -203,6 +203,7 @@ public class SeleniumTest {
             cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
         });
         log.info("获取到的cookies：{}", cookies);
+        browser.close();
     }
 
     /**

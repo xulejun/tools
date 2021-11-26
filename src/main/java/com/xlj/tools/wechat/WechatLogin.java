@@ -52,13 +52,13 @@ public class WechatLogin {
     public static final String APPMSGURL = "https://mp.weixin.qq.com/cgi-bin/appmsg?action=list_ex&begin=%d&count=5&fakeid=%s&type=9&query=&token=%s&lang=zh_CN&f=json&ajax=1";
 
     /**
-     * 登录重定向
+     * 通过cookie进行登录重定向，获取token
      *
      * @param cookies
      * @return
      */
-    public static String getRedirectUrl(String cookies) throws Exception {
-        URI location;
+    public static String getToken(String cookies) throws Exception {
+        String location;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpClientContext context = HttpClientContext.create();
 
@@ -71,10 +71,11 @@ public class WechatLogin {
             try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
                 HttpHost target = context.getTargetHost();
                 List<URI> redirectLocations = context.getRedirectLocations();
-                location = URIUtils.resolve(httpGet.getURI(), target, redirectLocations);
+                // 通过cookie 登录重定向（https://mp.weixin.qq.com/cgi-bin/home?t=home/index&lang=zh_CN&token=1193432834）
+                location = URIUtils.resolve(httpGet.getURI(), target, redirectLocations).toASCIIString();
             }
         }
-        return location.toASCIIString();
+        return location.substring(location.indexOf("token=") + 6);
     }
 
     /**

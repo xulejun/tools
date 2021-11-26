@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WechatArticle implements Serializable {
+public class WechatArticleBean implements Serializable {
     private static final long serialVersionUID = -2834477448119860567L;
     /**
      * 文章链接

@@ -30,7 +30,7 @@ public class WechatList {
      * @param totalNum
      * @return
      */
-    public static List<WechatArticle> getWeixinArticleList(String token, String fakeId, int totalNum) throws Exception {
+    public static List<WechatArticleBean> getWeixinArticleList(String token, String fakeId, int totalNum) throws Exception {
         // URL翻页参数
         int index = 5;
         // 循环次数
@@ -71,11 +71,11 @@ public class WechatList {
         return wechatArticleList(jsonArray);
     }
 
-    private static List<WechatArticle> wechatArticleList(JSONArray jsonArray) {
-        List<WechatArticle> list = new ArrayList<>(jsonArray.size());
+    private static List<WechatArticleBean> wechatArticleList(JSONArray jsonArray) {
+        List<WechatArticleBean> list = new ArrayList<>(jsonArray.size());
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject job = jsonArray.getJSONObject(i);
-            WechatArticle wechatArticle = WechatArticle.builder()
+            WechatArticleBean wechatArticle = WechatArticleBean.builder()
                     .link(job.getStr("link"))
                     .title(job.getStr("title"))
                     // 从公众号列表下获取到的时间是秒

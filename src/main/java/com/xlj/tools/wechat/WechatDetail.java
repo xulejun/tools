@@ -28,7 +28,7 @@ public class WechatDetail {
      * @return 公众号文章正文内容
      * @throws IOException
      */
-    public static void articleFilter(WechatArticle article) throws Exception {
+    public static void articleFilter(WechatArticleBean article) throws Exception {
         // 标题和时间都可通过列表页获取
         String url = article.getLink();
         Document doc = Jsoup.connect(url).maxBodySize(0).timeout(15 * 1000).get();
