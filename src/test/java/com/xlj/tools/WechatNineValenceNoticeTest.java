@@ -46,7 +46,7 @@ public class WechatNineValenceNoticeTest {
         timeRange.put("07:55:00", "08:01:00");
         timeRange.put("10:55:00", "11:01:00");
         timeRange.put("12:00:00", "12:31:00");
-        timeRange.put("16:30:00", "17:01:00");
+        timeRange.put("16:40:00", "17:01:00");
         timeRange.put("18:55:00", "19:01:00");
         timeRange.put("19:55:00", "20:01:00");
         timeRange.put("21:55:00", "22:01:00");

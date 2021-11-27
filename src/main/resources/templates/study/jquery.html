@@ -6,6 +6,25 @@
     <script src="https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
 </head>
 <body>
+<style type="text/css">
+    #panel, #flip {
+        padding: 10px;
+        text-align: center;
+        background-color: antiquewhite;
+        border: solid 1px rosybrown;
+    }
+
+    #panel {
+        padding: 50px;
+        display: none;
+    }
+
+    .blue {
+        color: blue;
+        text-align: center;
+    }
+</style>
+
 <p>点就消失1</p>
 <p>点就消失2</p>
 <p>点就消失3</p>
@@ -29,9 +48,136 @@
 <!--样式需要加上position，否则元素会有自己固定的位置，无法实现动画效果-->
 <div id="div4" style="background-color: green;height: 50px;width: 50px;position: absolute"></div>
 <br>
+<br>
+<br>
+<br>
+<button id="stop">停止滑动</button>
+<div id="flip">点我向下滑动面板</div>
+<div id="panel">hello world</div>
+<br>
+<button id="button5">隐藏下面段落</button>
+<p id="p3">这是一个段落，将会被隐藏，隐藏后会弹框</p>
+<br>
+
+<button id="button6">执行方法链</button>
+<p id="p4">展示方法链的内容</p>
+<br>
+
+<button id="button7">删除元素</button>
+<div id="div5" style="border: solid 1px red;background-color: bisque">
+    这是首行内容
+    <p class="a">这是第一个段落</p>
+    <p class="a">这是第二个段落</p>
+</div>
+
+<br>
+<button id="button8">点击改变样式</button>
+<p id="p5">通过添加类的方式改变样式</p>
+<br>
+
+<div id="div6" style="border: solid 1px rebeccapurple">
+    <p>这是第一个段落</p>
+    <p>这是第二个段落</p>
+    <p class="b">这是第四个段落</p>
+    <p>这是第三个段落</p>
+</div>
+<br>
+
+<button id="button9">通过AJAX获取外部资源</button>
+<p id="p6"></p>
+<br>
+<button id="button10">AJAX调用</button>
 </body>
 
 <script>
+    // AJAX
+    $(function () {
+        $("#button10").click(function () {
+            $.get("/url", function (data, status) {
+                alert("数据：" + data + "\n状态：" + status);
+            })
+        })
+    });
+
+    $(function () {
+        $("#button9").click(function () {
+            // 跨域问题，无法获取
+            $("#p6").load("https://www.runoob.com/try/ajax/demo_test.txt");
+        })
+    });
+
+    // 查找元素，过滤
+    $(function () {
+        $("#div6 p").first().css({"color": "red", "text-align": "center"});    // 第一个p标签赋予样式
+        $("#div6 p").last().css({"color": "blue", "text-align": "center"});     // 最后一个p标签赋予样式
+        $("#div6 p").eq(1).css({"color": "burlywood", "text-align": "center"});     // 根据索引号找到第二个p标签赋予样式
+        $("#div6 p").filter(".b").css({"color": "yellow", "text-align": "center"});     // 根据条件找到类名为b的p标签赋予样式
+        // $("#div6 p").not(".b").css({"color":"yellow","text-align":"center"});     // 与filter相反
+    });
+
+    // 元素遍历
+    // —————父元素———————
+    // ——parent() 返回所选元素的直接父元素
+    // parents() 返回所选元素的所有父元素
+    // parents("元素标签名，例：li") 根据条件返回所选元素的所有父元素
+    // parentsUntil() 返回介于给定元素之间的所有祖先元素
+    // —————子元素———————
+    // children() 返回所选元素的直接子元素
+    // find("p") 返回所选元素的所有p子元素
+    // find("*") 返回所选元素的所有子元素
+    // —————同胞元素———————
+    // siblings() 返回所选元素的同胞元素
+    // next() 返回所选元素的下一个同胞元素
+    // nextAll() 返回所选元素的之后所有同胞元素
+
+    // 添加删除类
+    $("#button8").click(function () {
+        $("#p5").addClass("blue");
+        $("#p5").removeClass("blue");
+    });
+
+    // 删除元素
+    $("#button7").click(function () {
+        // $("#div5").remove()     // 删除所有元素
+        // $("#div5").empty()     // 删除所有子元素
+        $("p").remove(".a")     // 删除class=a的所有p元素
+    });
+
+    // 插入
+    // append() 所选元素结尾插入内容（最右边）
+    // prepend() 所选元素开头插入内容（最左边）
+    // after() 所选元素之后插入内容（下面）
+    // before() 所选元素之前插入内容（上面）
+
+    // text() 所选元素的文本内容
+    // html() 所选元素的内容，包括html标签
+    // val() 返回表达字段的值
+
+    // 方法链chaining：一个标签顺序执行多个方法
+    $("#button6").click(function () {
+        $("#p4").css("color", "red").slideDown(2000).slideUp(2000)
+    });
+
+    // 动画回调函数作用
+    $(function () {
+        $("#button5").click(function () {
+            // 如不使用回调函数，则会先弹框，后隐藏
+            $("#p3").hide("slow", function () {
+                alert("这个段落被隐藏")
+            })
+        })
+    });
+
+    // 停止动画
+    $(function () {
+        $("#flip").click(function () {
+            $("#panel").slideDown(5000);
+        });
+        $("#stop").click(function () {
+            $("#panel").stop();
+        });
+    });
+
     // 动画
     $("#button4").click(function () {
         // $("#div4").animate({left: '250px'});

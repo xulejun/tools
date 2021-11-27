@@ -110,7 +110,7 @@ public class WechatNineValenceNotice {
         String articleUrl = article.getStr("link");
         long articleTime = article.getLong("update_time") * 1000;
         String setNineValenceArticleUrlKey = "nineValence.articleUrl";
-        log.info("响应状态码={}，文章标题={}，文章链接={}", title, articleUrl, responseStatus);
+        log.info("响应状态码={}，文章标题={}，文章链接={}", responseStatus,title, articleUrl);
         // 文章标题 含有 九价 ，并且 redis 中不存在数据
         boolean isNeed = title.contains("九价") && (!redisTemplate.opsForSet().isMember(setNineValenceArticleUrlKey, articleUrl));
 
