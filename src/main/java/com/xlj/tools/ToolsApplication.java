@@ -5,6 +5,8 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -20,6 +22,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableRedisHttpSession     // 整合Redis作为session存储
 @MapperScan("com.xlj.tools.dao")
+@ComponentScan(excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.xlj.tools.mq.*")})   // 扫描包过滤
 //@PropertySource(value = {"classpath:kafka.properties"}, encoding = "UTF-8")     // 导入配置文件，与@Value结合使用，取值
 //@ImportResource(locations = "classpath:kafka.properties")       // 加载配置文件
 public class ToolsApplication {
