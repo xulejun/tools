@@ -12,9 +12,9 @@ public class SeleniumUtil {
     public static ChromeDriver browser;
 
     /**
-     * 驱动路径（在resource/driver下有该驱动）
+     * 驱动路径
      */
-    private static final String DRIVER_PATH = "D:/webdriver/chromedriver-89.exe";
+    public static final String DRIVER_PATH = System.getProperty("user.dir")+"\\src\\main\\resources\\doc\\chromedriver-89.exe";
 
     /**
      * 获取Selenium浏览器驱动
