@@ -53,12 +53,9 @@ import static com.xlj.tools.basis.date.TimeCaculation.getDatesBetween;
 //@SpringBootTest
 public class ToolsApplicationTests {
     @Test
-    public void methodTest() {
+    public void methodTest() throws Exception{
         System.out.println("");
     }
-
-
-
 
     public static void main(String[] args) throws Exception {
         System.out.println("");

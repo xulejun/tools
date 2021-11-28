@@ -3,21 +3,17 @@ package com.xlj.tools;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import com.xlj.tools.util.SeleniumUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.xlj.tools.util.SeleniumUtil.*;
 
 
 /**
@@ -30,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SeleniumTest {
-
-    private static ChromeDriver browser;
 
     /**
      * 自动配置模拟登录解析
@@ -60,7 +54,7 @@ public class SeleniumTest {
 
     private String mockLogin(String loginUrl, String userName, String password,
                              String userNameXpath, String passwordXpath, String loginXpath, String loginViewXpath, String loginPreXpath) throws Exception {
-        SeleniumUtil.getBrowser();
+        getBrowser();
         browser.get(loginUrl);
         if (StrUtil.isNotBlank(loginViewXpath)) {
             browser.findElementByXPath(loginViewXpath).click();
@@ -111,7 +105,7 @@ public class SeleniumTest {
      * @param cookies
      */
     private void dynamicParse(String cookies, String articleUrl, String loginUrl) {
-        SeleniumUtil.getBrowser();
+        getBrowser();
         // 先访问页面的登录页，目的是给cookie加domain，不然会报错:invalid cookie domain
         browser.get(loginUrl);
         // 因为上面只是访问登录页，并未做真正的登录，这里删除访问后的cookie
@@ -156,7 +150,7 @@ public class SeleniumTest {
      * @throws Exception
      */
     private String getCookie(String loginUrl) throws Exception {
-        SeleniumUtil.getBrowser();
+        getBrowser();
         // todo 完善等待时间
         browser.get(loginUrl);
         TimeUnit.SECONDS.sleep(20);
@@ -180,7 +174,7 @@ public class SeleniumTest {
     @Test
     public void getWeChatCookies() throws Exception {
         // 浏览器驱动配置
-        SeleniumUtil.getBrowser();
+        getBrowser();
         // 测试微信公众号登录网站
         String loginUrl = "https://mp.weixin.qq.com/";
         browser.get(loginUrl);
