@@ -83,16 +83,25 @@ public class TimeCaculation {
     }
 
     /**
-     * 计算两个时间范围内的区间
+     * 计算两个日期范围内的区间
      *
-     * @param startDate
-     * @param endDate
-     * @return
+     * @param start （yyyy-MM-dd）
+     * @param end（yyyy-MM-dd）
+     * @return （yyyy-MM-dd）具体日期 List
      */
-    public static List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
+    public static List<String> getDatesBetween(String start, String end) {
+        String[] startDateArr = start.split("-");
+        String[] endDateArr = end.split("-");
+        // 设置开始日期
+        LocalDate startDate = LocalDate.of(Integer.parseInt(startDateArr[0]), Integer.parseInt(startDateArr[1]), Integer.parseInt(startDateArr[2]));
+        // 结束日期
+        LocalDate endDate = LocalDate.of(Integer.parseInt(endDateArr[0]), Integer.parseInt(endDateArr[1]), Integer.parseInt(endDateArr[2]));
+        // 两个事件相隔天数
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate);
-        return IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween)
+
+        List<LocalDate> dateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween)
                 .mapToObj(startDate::plusDays).collect(Collectors.toList());
+        return dateList.stream().map(LocalDate::toString).collect(Collectors.toList());
     }
 
 }
