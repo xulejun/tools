@@ -23,4 +23,8 @@ public final class WxApiCode {
      * 账号限流
      */
     public static final String FREQ_CONTROL = "200013";
+    /**
+     * cookie 失效
+     */
+    public static final String INVALID_SESSION = "200003";
 }

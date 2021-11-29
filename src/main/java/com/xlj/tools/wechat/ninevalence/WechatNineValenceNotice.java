@@ -2,6 +2,7 @@ package com.xlj.tools.wechat.ninevalence;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONArray;
@@ -67,14 +68,16 @@ public class WechatNineValenceNotice {
                 // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
-
+                if (StrUtil.isBlank(fakeId)) {
+                    return;
+                }
                 // 采集文章
                 int pos = 0;    // 访问列表参数
                 // 采集地址列表页
                 String listUrl = String.format(APPMSGURL, pos, fakeId, token);
                 // 请求referer
                 String refererUrl = String.format(REFERER, token);
-                final String result = HttpRequest.get(listUrl)
+                String result = HttpRequest.get(listUrl)
                         .header(Header.REFERER, refererUrl)
                         .header(Header.USER_AGENT, USERAGENT)
                         .timeout(15 * 1000)
@@ -110,7 +113,7 @@ public class WechatNineValenceNotice {
         String articleUrl = article.getStr("link");
         long articleTime = article.getLong("update_time") * 1000;
         String setNineValenceArticleUrlKey = "nineValence.articleUrl";
-        log.info("响应状态码={}，文章标题={}，文章链接={}", responseStatus,title, articleUrl);
+        log.info("响应状态码={}，文章标题={}，文章链接={}", responseStatus, title, articleUrl);
         // 文章标题 含有 九价 ，并且 redis 中不存在数据
         boolean isNeed = title.contains("九价") && (!redisTemplate.opsForSet().isMember(setNineValenceArticleUrlKey, articleUrl));
 
