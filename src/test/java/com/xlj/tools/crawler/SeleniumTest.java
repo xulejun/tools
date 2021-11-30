@@ -1,8 +1,9 @@
-package com.xlj.tools;
+package com.xlj.tools.crawler;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import com.xlj.tools.ToolsApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

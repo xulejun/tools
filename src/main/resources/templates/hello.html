@@ -1,18 +1,46 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<html lang="en">
 <head>
     <title>hello</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 
 <script>
-    alert("这是js脚本弹窗");
+    // alert("这是js脚本弹窗");
 </script>
 
 <body>
-<h1 th:text="${name}">name</h1>
+<!--<h1 th:text="${name}">name</h1>-->
 <!--字符串拼写。 两种方式，一种是用加号，一种是在前后放上 ||, 显然第二种方式可读性更好。-->
-<h1 th:text="'Hello!  '+ ${name} + '!'">hello world</h1>
-<h1 style="color: rebeccapurple" th:text="|Hello  ${name}! welcome to thymeleaf|">hello world</h1>
+<!--<h1 th:text="'Hello!  '+ ${name} + '!'">hello world</h1>-->
+<!--<h1 style="color: rebeccapurple" th:text="|Hello  ${name}! welcome to thymeleaf|">hello world</h1>-->
+
+<!--<h1 style="margin-top: 60%;text-align: center"><a href="">点击此处查看文章内容</a></h1>-->
+<!--<div style="margin-top: 60%;text-align: center">-->
+<!--    <table border="1" style="margin-top: 60%;margin-left: 20%">-->
+    <table width="80%" border="1" cellspacing="1" cellpadding="4" align="center" style="margin-top: 50%;text-align: center">
+        <tr>
+            <td style="color: #255e95">场次名称</td>
+            <td>这是场次名称</td>
+        </tr>
+        <tr>
+            <td style="color: #255e95">预约时间</td>
+            <td>这是预约时间</td>
+        </tr>
+        <tr>
+            <td style="color: #255e95">预约状态</td>
+            <td style="color: red">这是预约状态</td>
+        </tr>
+        <tr>
+            <td style="color: #255e95">放号总量</td>
+            <td>这是放号总量</td>
+        </tr>
+        <tr>
+            <td style="color: #255e95">剩余数量</td>
+            <td>这是剩余数量</td>
+        </tr>
+    </table>
+<!--</div>-->
 </body>
 </html>

@@ -36,12 +36,16 @@ import static com.xlj.tools.wechat.WxApiCode.FREQ_CONTROL;
  */
 @Slf4j
 @Component
-public class WechatNineValenceNotice {
+public class AccountNineValenceNotice {
     @Value("${wechat.cookie}")
     private String cookie;
 
     @Value("${spring.mail.username}")
     private String sendName;
+
+    @Value("${mail.addressee}")
+    private String addresseeStr;
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -118,22 +122,10 @@ public class WechatNineValenceNotice {
         boolean isNeed = title.contains("九价") && (!redisTemplate.opsForSet().isMember(setNineValenceArticleUrlKey, articleUrl));
 
         // 邮件发送
-        String[] addressee = {"xu-lejun@qq.com", "2545892258@qq.com"};
         if (isNeed) {
-            try {
-//                String title = "测试";
-//                String articleUrl = "https://www.baidu.com/";
-                MimeMessage message = mailSender.createMimeMessage();
-                MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-                messageHelper.setFrom(sendName);
-                messageHelper.setTo(addressee);
-                messageHelper.setSubject(title);
-                String content = "<h1 style=\"margin-top: 60%;text-align: center\"><a href=\"" + articleUrl + "\">点击此处查看文章内容</a></h1>";
-                messageHelper.setText(content, true);
-                mailSender.send(message);
-            } catch (MessagingException e) {
-                log.warn("邮件发送失败:", e);
-            }
+            String[] addressee = addresseeStr.split(",");
+            String content = "<h1 style=\"margin-top: 60%;text-align: center\"><a href=\"" + articleUrl + "\">点击此处查看文章内容</a></h1>";
+            sendHtmlMail(title, addressee, content);
 
             // 数据入库-redis
             redisTemplate.opsForSet().add(setNineValenceArticleUrlKey, articleUrl);
@@ -141,6 +133,27 @@ public class WechatNineValenceNotice {
             String setNineValenceArticleKey = "nineValence.article";
             String articleJsonStr = JSONUtil.toJsonStr(articleBean);
             redisTemplate.opsForSet().add(setNineValenceArticleKey, articleJsonStr);
+        }
+    }
+
+    /**
+     * 发送htmlMail
+     *
+     * @param title
+     * @param addressee
+     * @param content
+     */
+    public void sendHtmlMail(String title, String[] addressee, String content) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
+            messageHelper.setFrom(sendName);
+            messageHelper.setTo(addressee);
+            messageHelper.setSubject(title);
+            messageHelper.setText(content, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            log.warn("邮件发送失败:", e);
         }
     }
 }

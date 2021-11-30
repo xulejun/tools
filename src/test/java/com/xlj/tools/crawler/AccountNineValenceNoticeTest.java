@@ -1,12 +1,13 @@
-package com.xlj.tools;
+package com.xlj.tools.crawler;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Maps;
+import com.xlj.tools.ToolsApplication;
 import com.xlj.tools.wechat.WechatArticleBean;
 import com.xlj.tools.wechat.WechatList;
 import com.xlj.tools.wechat.WechatLogin;
-import com.xlj.tools.wechat.ninevalence.WechatNineValenceNotice;
+import com.xlj.tools.wechat.ninevalence.AccountNineValenceNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,12 +32,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WechatNineValenceNoticeTest {
+public class AccountNineValenceNoticeTest {
     @Value("${wechat.cookie}")
     private String cookie;
 
     @Autowired
-    private WechatNineValenceNotice nineValenceNotice;
+    private AccountNineValenceNotice nineValenceNotice;
     /**
      * 采集文章的时间范围
      */
