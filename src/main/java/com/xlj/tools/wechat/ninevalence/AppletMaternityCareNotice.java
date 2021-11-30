@@ -66,13 +66,15 @@ public class AppletMaternityCareNotice {
                 if (CHECK_DOC_NAME.equals(docName) && (!redisTemplate.opsForSet().isMember(SET_MATERNITY_CARE, schDate + "-" + schStateName))) {
                     String title = "江西省妇幼的保健院九价通知";
                     log.info("标题={}，场次名称={}，预约日期={}，预约状态={}，放号总量={}，剩余数量={}，", title, docName, schDate, schStateName, info.getNumHadReg(), info.getNumRemain());
-                    String content = "<table width=\"80%\" border=\"1\" cellspacing=\"1\" cellpadding=\"4\" align=\"center\" style=\"margin-top: 50%;text-align: center\">\n" +
+                    String content = "<div style=\"margin-top: 20%;\">\n" +
+                            "\n" +
+                            "    <table width=\"80%\" border=\"1\" cellspacing=\"1\" cellpadding=\"4\" align=\"center\" style=\"text-align: center\">\n" +
                             "        <tr>\n" +
                             "            <td style=\"color: #255e95\">场次名称</td>\n" +
                             "            <td>" + docName + "</td>\n" +
                             "        </tr>\n" +
                             "        <tr>\n" +
-                            "            <td style=\"color: #255e95\">预约日期</td>\n" +
+                            "            <td style=\"color: #255e95\">预约时间</td>\n" +
                             "            <td>" + schDate + "</td>\n" +
                             "        </tr>\n" +
                             "        <tr>\n" +
@@ -87,7 +89,9 @@ public class AppletMaternityCareNotice {
                             "            <td style=\"color: #255e95\">剩余数量</td>\n" +
                             "            <td>" + info.getNumRemain() + "</td>\n" +
                             "        </tr>\n" +
-                            "    </table>";
+                            "    </table>\n" +
+                            "    <img src=\"http://imgbdb3.bendibao.com/ncbdb/live/20214/12/2021412153050_93015.png\" width=\"80%\" style=\"margin-left: 10%\">\n" +
+                            "</div>";
                     String[] addressee = addresseeStr.split(",");
                     // 发送邮件
                     accountNineValenceNotice.sendHtmlMail(title, addressee, content);
