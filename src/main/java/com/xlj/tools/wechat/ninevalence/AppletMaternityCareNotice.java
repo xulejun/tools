@@ -31,7 +31,7 @@ public class AppletMaternityCareNotice {
     private String addresseeStr;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
     /**
      * 小程序请求地址
      */
@@ -63,7 +63,7 @@ public class AppletMaternityCareNotice {
                 String schDate = info.getSchDate();
                 // 预约状态
                 String schStateName = info.getSchStateName();
-                if (CHECK_DOC_NAME.equals(docName) && redisTemplate.opsForSet().isMember(SET_MATERNITY_CARE, schDate + "-" + schStateName)) {
+                if (CHECK_DOC_NAME.equals(docName) && (!redisTemplate.opsForSet().isMember(SET_MATERNITY_CARE, schDate + "-" + schStateName))) {
                     String title = "江西省妇幼的保健院九价通知";
                     log.info("标题={}，场次名称={}，预约日期={}，预约状态={}，放号总量={}，剩余数量={}，", title, docName, schDate, schStateName, info.getNumHadReg(), info.getNumRemain());
                     String content = "<table width=\"80%\" border=\"1\" cellspacing=\"1\" cellpadding=\"4\" align=\"center\" style=\"margin-top: 50%;text-align: center\">\n" +

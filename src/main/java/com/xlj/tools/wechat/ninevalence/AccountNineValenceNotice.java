@@ -50,7 +50,7 @@ public class AccountNineValenceNotice {
     private JavaMailSender mailSender;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     private static List<String> queryAccountList = Lists.newArrayList();
 
