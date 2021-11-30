@@ -7,6 +7,7 @@ import cn.hutool.json.JSONObject;
 import com.xlj.tools.bean.ninevalence.MaternityCareAppletData;
 import com.xlj.tools.bean.ninevalence.MaternityCareAppletInfo;
 import com.xlj.tools.bean.ninevalence.MaternityCareAppletInfoDataList;
+import com.xlj.tools.util.MailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,11 +25,14 @@ import java.util.List;
 @Slf4j
 @Component
 public class AppletMaternityCareNotice {
-    @Autowired
-    private AccountNineValenceNotice accountNineValenceNotice;
+    @Value("${spring.mail.username}")
+    private String sendFrom;
 
     @Value("${mail.addressee}")
-    private String addresseeStr;
+    private String sendTo;
+
+    @Autowired
+    private MailUtil mailUtil;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -92,9 +96,9 @@ public class AppletMaternityCareNotice {
                             "    </table>\n" +
                             "    <img src=\"http://imgbdb3.bendibao.com/ncbdb/live/20214/12/2021412153050_93015.png\" width=\"80%\" style=\"margin-left: 10%\">\n" +
                             "</div>";
-                    String[] addressee = addresseeStr.split(",");
+                    String[] addressee = sendTo.split(",");
                     // 发送邮件
-                    accountNineValenceNotice.sendHtmlMail(title, addressee, content);
+                    mailUtil.sendHtmlMail(sendFrom, addressee, title, content);
                     // 数据入库
                     redisTemplate.opsForSet().add(SET_MATERNITY_CARE, schDate + "-" + schStateName);
                 }

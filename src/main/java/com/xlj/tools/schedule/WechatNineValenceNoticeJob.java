@@ -85,7 +85,7 @@ public class WechatNineValenceNoticeJob {
                 }
                 break;
             }
-            TimeUnit.SECONDS.sleep(RandomUtil.randomLong(1, 3));
+//            TimeUnit.SECONDS.sleep(RandomUtil.randomLong(1, 3));
         }
     }
 

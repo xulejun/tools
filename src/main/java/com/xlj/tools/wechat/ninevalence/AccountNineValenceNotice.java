@@ -9,18 +9,15 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import com.xlj.tools.util.MailUtil;
 import com.xlj.tools.wechat.WechatArticleBean;
 import com.xlj.tools.wechat.WechatLogin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,13 +38,13 @@ public class AccountNineValenceNotice {
     private String cookie;
 
     @Value("${spring.mail.username}")
-    private String sendName;
+    private String sendFrom;
 
     @Value("${mail.addressee}")
-    private String addresseeStr;
+    private String sendTo;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private MailUtil mailUtil;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -73,6 +70,8 @@ public class AccountNineValenceNotice {
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
                 if (StrUtil.isBlank(fakeId)) {
+                    String[] addressee = sendTo.split(",");
+                    mailUtil.sendHtmlMail(sendFrom, addressee, "微信公众号cookie失效", "请及时添加cookie");
                     return;
                 }
                 // 采集文章
@@ -123,9 +122,9 @@ public class AccountNineValenceNotice {
 
         // 邮件发送
         if (isNeed) {
-            String[] addressee = addresseeStr.split(",");
+            String[] addressee = sendTo.split(",");
             String content = "<h1 style=\"margin-top: 60%;text-align: center\"><a href=\"" + articleUrl + "\">点击此处查看文章内容</a></h1>";
-            sendHtmlMail(title, addressee, content);
+            mailUtil.sendHtmlMail(sendFrom, addressee, title, content);
 
             // 数据入库-redis
             redisTemplate.opsForSet().add(setNineValenceArticleUrlKey, articleUrl);
@@ -133,27 +132,6 @@ public class AccountNineValenceNotice {
             String setNineValenceArticleKey = "nineValence.article";
             String articleJsonStr = JSONUtil.toJsonStr(articleBean);
             redisTemplate.opsForSet().add(setNineValenceArticleKey, articleJsonStr);
-        }
-    }
-
-    /**
-     * 发送htmlMail
-     *
-     * @param title
-     * @param addressee
-     * @param content
-     */
-    public void sendHtmlMail(String title, String[] addressee, String content) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-            messageHelper.setFrom(sendName);
-            messageHelper.setTo(addressee);
-            messageHelper.setSubject(title);
-            messageHelper.setText(content, true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            log.warn("邮件发送失败:", e);
         }
     }
 }
