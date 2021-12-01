@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>JQuery学习</title>
-    <script src="https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+    <!--    <script src="https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>-->
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+    <script src="https://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="https://cdn.static.runoob.com/libs/jquery/1.8.3/jquery.js"></script>
 </head>
 <body>
 <style type="text/css">
@@ -87,13 +91,58 @@
 <p id="p6"></p>
 <br>
 <button id="button10">AJAX调用</button>
+<br>
+表单校验
+<form class="cmxform" id="commentForm" method="get" action="">
+    <fieldset>
+        <legend>输入您的名字，邮箱，URL，备注。</legend>
+        <p>
+            <label for="cname">Name (必需, 最小两个字母)</label>
+            <input id="cname" name="name" minlength="2" type="text" required>
+        </p>
+        <p>
+            <label for="cemail">E-Mail (必需)</label>
+            <input id="cemail" type="email" name="email" required>
+        </p>
+        <p>
+            <label for="curl">URL (可选)</label>
+            <input id="curl" type="url" name="url">
+        </p>
+        <p>
+            <label for="ccomment">备注 (必需)</label>
+            <textarea id="ccomment" name="comment" required></textarea>
+        </p>
+        <p>
+            <input class="submit" type="submit" value="Submit">
+        </p>
+    </fieldset>
+</form>
+
+
 </body>
 
 <script>
+    // 表单提交校验
+    $.validator.setDefaults({
+        submitHandler: function () {
+            alert("提交事件!");
+        }
+    });
+    $().ready(function () {
+        $("#commentForm").validate();
+    });
+
+    // $ 与 其他框架发生冲突解决
+    // let jq = $.noConflict();
+    // jq(function () {
+    //     jq("p").append("hello");
+    // });
+
     // AJAX
     $(function () {
         $("#button10").click(function () {
-            $.get("/url", function (data, status) {
+            // getJSON 可解决跨域问题（JSONP 的实现）
+            $.getJSON("https://www.runoob.com/try/ajax/jsonp.php?jsoncallback=?", function (data, status) {
                 alert("数据：" + data + "\n状态：" + status);
             })
         })
@@ -192,7 +241,7 @@
         $("#div3").fadeIn(3000);
     });
 
-    // document ready 为了防止文档在完全加载之间运行JQ代码
+    // $(document).ready(function(){}) 文档加载完成之后执行，等同于$(function(){})
     // $(document).ready(function () {
     //     $("p").click(function () {
     //         $(this).hide();
