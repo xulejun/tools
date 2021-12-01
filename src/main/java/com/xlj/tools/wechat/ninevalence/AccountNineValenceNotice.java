@@ -1,6 +1,7 @@
 package com.xlj.tools.wechat.ninevalence;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.Header;
@@ -49,6 +50,18 @@ public class AccountNineValenceNotice {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * hashCookie 相关字段
+     */
+    private static final String HASH_WECHAT_COOKIE = "wechat.cookie.%s";
+    static final String COOKIE_HK = "cookie";
+    static final String CRAWL_COUNT_HK = "crawlCount";
+    static final String LIMIT_CRAWL_COUNT_HK = "limitCrawlCount";
+    static final String CREATE_TIME_HK = "createTime";
+    static final String LIMIT_TIME_HK = "limitTime";
+    static final String INVALID_TIME_HK = "invalidTime";
+
+
     private static List<String> queryAccountList = Lists.newArrayList();
 
     static {
@@ -62,16 +75,20 @@ public class AccountNineValenceNotice {
 
     public void notice() throws InterruptedException {
         JSONArray articleJsonArray = null;
-
         for (String queryAccount : queryAccountList) {
             String responseStatus;
             try {
+                // cookie记录
+                cookieRecord();
                 // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
                 if (StrUtil.isBlank(fakeId)) {
+                    log.warn("微信公众号cookie失效，cookie={}", cookie);
                     String[] addressee = sendTo.split(",");
                     mailUtil.sendHtmlMail(sendFrom, addressee, "微信公众号cookie失效", "请及时添加cookie");
+                    // 记录cookie失效时间
+                    redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, INVALID_TIME_HK, DateUtil.now());
                     return;
                 }
                 // 采集文章
@@ -89,9 +106,11 @@ public class AccountNineValenceNotice {
 
                 // 响应结果校验
                 responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-
                 if (FREQ_CONTROL.equals(responseStatus)) {
                     log.warn("账号已经被限流");
+                    // 记录第一次限流时间、限流前所采集次数
+                    redisTemplate.opsForHash().putIfAbsent(HASH_WECHAT_COOKIE, LIMIT_TIME_HK, DateUtil.now());
+                    redisTemplate.opsForHash().putIfAbsent(HASH_WECHAT_COOKIE, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(HASH_WECHAT_COOKIE, CRAWL_COUNT_HK));
                     return;
                 }
                 articleJsonArray = resultJson.getByPath("app_msg_list", JSONArray.class);
@@ -115,9 +134,9 @@ public class AccountNineValenceNotice {
         String title = article.getStr("title");
         String articleUrl = article.getStr("link");
         long articleTime = article.getLong("update_time") * 1000;
-        String setNineValenceArticleUrlKey = "nineValence.articleUrl";
         log.info("响应状态码={}，文章标题={}，文章链接={}", responseStatus, title, articleUrl);
         // 文章标题 含有 九价 ，并且 redis 中不存在数据
+        String setNineValenceArticleUrlKey = "nineValence.articleUrl";
         boolean isNeed = title.contains("九价") && (!redisTemplate.opsForSet().isMember(setNineValenceArticleUrlKey, articleUrl));
 
         // 邮件发送
@@ -129,9 +148,20 @@ public class AccountNineValenceNotice {
             // 数据入库-redis
             redisTemplate.opsForSet().add(setNineValenceArticleUrlKey, articleUrl);
             WechatArticleBean articleBean = WechatArticleBean.builder().title(title).link(articleUrl).articleTime(articleTime).build();
-            String setNineValenceArticleKey = "nineValence.article";
             String articleJsonStr = JSONUtil.toJsonStr(articleBean);
+            String setNineValenceArticleKey = "nineValence.article";
             redisTemplate.opsForSet().add(setNineValenceArticleKey, articleJsonStr);
         }
+    }
+
+    private void cookieRecord() {
+        String cookieKey = String.format(HASH_WECHAT_COOKIE, cookie.substring(cookie.indexOf("uuid")));
+        // cookie状态记录
+        if (!redisTemplate.hasKey(cookieKey)) {
+            redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, COOKIE_HK, cookie);
+            redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, CREATE_TIME_HK, DateUtil.now());
+        }
+        // 记录采集次数
+        redisTemplate.opsForHash().increment(HASH_WECHAT_COOKIE, CRAWL_COUNT_HK, 1L);
     }
 }
