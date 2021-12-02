@@ -61,7 +61,6 @@ public class AccountNineValenceNotice {
     static final String LIMIT_TIME_HK = "limitTime";
     static final String INVALID_TIME_HK = "invalidTime";
 
-
     private static List<String> queryAccountList = Lists.newArrayList();
 
     static {

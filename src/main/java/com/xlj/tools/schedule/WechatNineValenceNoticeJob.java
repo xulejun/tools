@@ -50,6 +50,7 @@ public class WechatNineValenceNoticeJob {
         timeRange.put("12:55:00", "13:01:00");
         timeRange.put("13:55:00", "14:01:00");
         timeRange.put("14:55:00", "15:01:00");
+        timeRange.put("15:25:00", "15:35:00");
         timeRange.put("16:40:00", "17:01:00");
         timeRange.put("18:55:00", "19:01:00");
         timeRange.put("19:55:00", "20:01:00");
