@@ -75,12 +75,13 @@ public class AccountNineValenceNotice {
     }
 
     public void notice() throws InterruptedException {
+        String cookieKey = String.format(HASH_WECHAT_COOKIE, cookie.substring(cookie.indexOf("uuid")));
         JSONArray articleJsonArray = null;
         for (String queryAccount : queryAccountList) {
             String responseStatus;
             try {
                 // cookie记录
-                cookieRecord();
+                cookieRecord(cookieKey);
                 // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
@@ -93,7 +94,7 @@ public class AccountNineValenceNotice {
                         sendMailCount++;
                     }
                     // 记录cookie失效时间
-                    redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, INVALID_TIME_HK, DateUtil.now());
+                    redisTemplate.opsForHash().put(cookieKey, INVALID_TIME_HK, DateUtil.now());
                     return;
                 }
                 // 采集文章
@@ -114,8 +115,8 @@ public class AccountNineValenceNotice {
                 if (FREQ_CONTROL.equals(responseStatus)) {
                     log.warn("账号已经被限流");
                     // 记录第一次限流时间、限流前所采集次数
-                    redisTemplate.opsForHash().putIfAbsent(HASH_WECHAT_COOKIE, LIMIT_TIME_HK, DateUtil.now());
-                    redisTemplate.opsForHash().putIfAbsent(HASH_WECHAT_COOKIE, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(HASH_WECHAT_COOKIE, CRAWL_COUNT_HK));
+                    redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
+                    redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(cookieKey, CRAWL_COUNT_HK));
                     return;
                 }
                 articleJsonArray = resultJson.getByPath("app_msg_list", JSONArray.class);
@@ -159,14 +160,13 @@ public class AccountNineValenceNotice {
         }
     }
 
-    private void cookieRecord() {
-        String cookieKey = String.format(HASH_WECHAT_COOKIE, cookie.substring(cookie.indexOf("uuid")));
+    private void cookieRecord(String cookieKey) {
         // cookie状态记录
         if (!redisTemplate.hasKey(cookieKey)) {
-            redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, COOKIE_HK, cookie);
-            redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, CREATE_TIME_HK, DateUtil.now());
+            redisTemplate.opsForHash().put(cookieKey, COOKIE_HK, cookie);
+            redisTemplate.opsForHash().put(cookieKey, CREATE_TIME_HK, DateUtil.now());
         }
         // 记录采集次数
-        redisTemplate.opsForHash().increment(HASH_WECHAT_COOKIE, CRAWL_COUNT_HK, 1L);
+        redisTemplate.opsForHash().increment(cookieKey, CRAWL_COUNT_HK, 1L);
     }
 }
