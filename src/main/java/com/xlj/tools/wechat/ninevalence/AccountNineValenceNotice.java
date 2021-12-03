@@ -63,6 +63,8 @@ public class AccountNineValenceNotice {
 
     private static List<String> queryAccountList = Lists.newArrayList();
 
+    int sendMailCount = 0;
+
     static {
         queryAccountList.add("公园接种");
         queryAccountList.add("董家窑接种");
@@ -84,8 +86,12 @@ public class AccountNineValenceNotice {
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
                 if (StrUtil.isBlank(fakeId)) {
                     log.warn("微信公众号cookie失效，cookie={}", cookie);
-                    String[] addressee = sendTo.split(",");
-                    mailUtil.sendHtmlMail(sendFrom, addressee, "微信公众号cookie失效", "请及时添加cookie");
+                    // cookie失效只发一次邮件
+                    if (sendMailCount <= 0) {
+                        String[] addressee = {"xu-lejun@qq.com"};
+                        mailUtil.sendHtmlMail(sendFrom, addressee, "微信公众号cookie失效", "请及时添加cookie");
+                        sendMailCount++;
+                    }
                     // 记录cookie失效时间
                     redisTemplate.opsForHash().put(HASH_WECHAT_COOKIE, INVALID_TIME_HK, DateUtil.now());
                     return;
