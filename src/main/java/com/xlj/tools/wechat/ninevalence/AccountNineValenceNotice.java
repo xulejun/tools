@@ -11,6 +11,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.xlj.tools.util.MailUtil;
+import com.xlj.tools.wechat.CookieExpiredException;
 import com.xlj.tools.wechat.WechatArticleBean;
 import com.xlj.tools.wechat.WechatLogin;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.xlj.tools.enums.WechatResponseEnum.*;
 import static com.xlj.tools.wechat.WechatLogin.*;
-import static com.xlj.tools.wechat.WxApiCode.FREQ_CONTROL;
 
 /**
  * 微信公众号九价文章采集通知
@@ -85,7 +86,7 @@ public class AccountNineValenceNotice {
                 // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
-                if (StrUtil.isBlank(fakeId)) {
+                if (INVALID_SESSION.getCode().equals(fakeId)) {
                     log.warn("微信公众号cookie失效，cookie={}", cookie);
                     // cookie失效只发一次邮件
                     if (sendMailCount <= 0) {
@@ -112,7 +113,7 @@ public class AccountNineValenceNotice {
 
                 // 响应结果校验
                 responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-                if (FREQ_CONTROL.equals(responseStatus)) {
+                if (FREQ_CONTROL.getCode().equals(responseStatus)) {
                     log.warn("账号已经被限流");
                     // 记录第一次限流时间、限流前所采集次数
                     redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
@@ -124,6 +125,9 @@ public class AccountNineValenceNotice {
                     log.warn("文章采集列表为空，{}", articleJsonArray);
                     return;
                 }
+            } catch (CookieExpiredException e) {
+                log.warn("获取公众号fakeId异常：{}", e.getMessage());
+                return;
             } catch (Exception e) {
                 log.warn("采集文章失败，queryAccount={}", queryAccount, e);
                 return;

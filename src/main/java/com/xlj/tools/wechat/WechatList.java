@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static com.xlj.tools.enums.WechatResponseEnum.*;
 import static com.xlj.tools.wechat.WechatLogin.*;
-import static com.xlj.tools.wechat.WxApiCode.*;
 
 /**
  * @author xlj
@@ -60,8 +60,9 @@ public class WechatList {
                 .execute().body();
         JSONObject resultJson = JSONUtil.parseObj(result);
         String responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-        if (FREQ_CONTROL.equals(responseStatus)) {
-//            throw new FreqControlException("账号限流[" + spiderWxJob.getCookie() + "]," + result);
+        if (FREQ_CONTROL.getCode().equals(responseStatus)) {
+            log.warn(FREQ_CONTROL.getMsg());
+            return null;
         }
         JSONArray jsonArray = resultJson.getByPath("app_msg_list", JSONArray.class);
         if (CollUtil.isEmpty(jsonArray)) {

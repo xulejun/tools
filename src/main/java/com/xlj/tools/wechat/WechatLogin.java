@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import static com.xlj.tools.wechat.WxApiCode.*;
+import static com.xlj.tools.enums.WechatResponseEnum.*;
 
 /**
  * @author xlj
@@ -87,7 +87,7 @@ public class WechatLogin {
      * @return
      * @throws IOException
      */
-    public static String getFakeId(String cookies, String query, String token) throws Exception {
+    public static String getFakeId(String cookies, String query, String token) {
         final String result = HttpRequest.get(String.format(SEARCHURL, query, token))
                 .header(Header.REFERER, String.format(REFERER, token))
                 .header(Header.COOKIE, cookies)
@@ -96,14 +96,14 @@ public class WechatLogin {
                 .timeout(15000).execute().body();
         JSONObject resultJson = JSONUtil.parseObj(result);
         String responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-        if (SUCCESS_CODE.equals(responseStatus)) {
+        if (SUCCESS_CODE.getCode().equals(responseStatus)) {
             return resultJson.getByPath("list[0].fakeid", String.class);
-        } else if (SYSTEM_ERROR.equals(responseStatus)) {
+        } else if (SYSTEM_ERROR.getCode().equals(responseStatus)) {
             log.warn("公众号有误，请核对所采集的公众号");
-            return null;
-        } else if (INVALID_SESSION.equals(responseStatus)) {
+            return SYSTEM_ERROR.getCode();
+        } else if (INVALID_SESSION.getCode().equals(responseStatus)) {
             log.warn("cookie 失效，请重新获取cookie");
-            return null;
+            return INVALID_SESSION.getCode();
         } else {
             throw new CookieExpiredException("result=" + result + "\n，cookie=" + cookies);
         }
