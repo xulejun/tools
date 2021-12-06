@@ -100,10 +100,8 @@ public class WechatLogin {
         if (SUCCESS_CODE.getCode().equals(responseStatus)) {
             return resultJson.getByPath("list[0].fakeid", String.class);
         } else if (SYSTEM_ERROR.getCode().equals(responseStatus)) {
-            log.warn("公众号有误，请核对所采集的公众号");
             return SYSTEM_ERROR.getCode();
         } else if (INVALID_SESSION.getCode().equals(responseStatus)) {
-            log.warn("cookie 失效，请重新获取cookie");
             return INVALID_SESSION.getCode();
         } else {
             throw new CookieExpiredException("result=" + result + "\n，cookie=" + cookies);

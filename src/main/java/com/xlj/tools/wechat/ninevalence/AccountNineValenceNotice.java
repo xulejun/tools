@@ -64,7 +64,7 @@ public class AccountNineValenceNotice {
 
     private static List<String> queryAccountList = Lists.newArrayList();
 
-    int sendMailCount = 0;
+    int invalidCount = 1;
 
     static {
         queryAccountList.add("公园接种");
@@ -86,16 +86,8 @@ public class AccountNineValenceNotice {
                 // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
-                if (INVALID_SESSION.getCode().equals(fakeId)) {
-                    log.warn("微信公众号cookie失效，cookie={}", cookie);
-                    // cookie失效只发一次邮件
-                    if (sendMailCount <= 0) {
-                        String[] addressee = {"xu-lejun@qq.com"};
-                        mailUtil.sendHtmlMail(sendFrom, addressee, "微信公众号cookie失效", "请及时添加cookie");
-                        sendMailCount++;
-                    }
-                    // 记录cookie失效时间
-                    redisTemplate.opsForHash().put(cookieKey, INVALID_TIME_HK, DateUtil.now());
+                // 结果校验
+                if (resultCheck(cookieKey, fakeId)) {
                     return;
                 }
                 // 采集文章
@@ -110,14 +102,9 @@ public class AccountNineValenceNotice {
                         .timeout(15 * 1000)
                         .execute().body();
                 JSONObject resultJson = JSONUtil.parseObj(result);
-
-                // 响应结果校验
                 responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-                if (FREQ_CONTROL.getCode().equals(responseStatus)) {
-                    log.warn("账号已经被限流");
-                    // 记录第一次限流时间、限流前所采集次数
-                    redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
-                    redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(cookieKey, CRAWL_COUNT_HK));
+                // 二次结果校验
+                if (resultCheck(cookieKey, responseStatus)) {
                     return;
                 }
                 articleJsonArray = resultJson.getByPath("app_msg_list", JSONArray.class);
@@ -133,18 +120,20 @@ public class AccountNineValenceNotice {
                 return;
             }
             // 数据处理
-            dealData(articleJsonArray, responseStatus);
+            dealData(articleJsonArray);
+            // 记录采集次数
+            redisTemplate.opsForHash().increment(cookieKey, CRAWL_COUNT_HK, 1L);
             // 随机睡眠，保证账号安全
             TimeUnit.SECONDS.sleep(RandomUtil.randomLong(10, 30));
         }
     }
 
-    private void dealData(JSONArray articleJsonArray, String responseStatus) {
+    private void dealData(JSONArray articleJsonArray) {
         JSONObject article = articleJsonArray.getJSONObject(0);
         String title = article.getStr("title");
         String articleUrl = article.getStr("link");
         long articleTime = article.getLong("update_time") * 1000;
-        log.info("响应状态码={}，文章标题={}，文章链接={}", responseStatus, title, articleUrl);
+        log.info("文章标题={}，文章链接={}", title, articleUrl);
         // 文章标题 含有 九价 ，并且 redis 中不存在数据
         String setNineValenceArticleUrlKey = "nineValence.articleUrl";
         boolean isNeed = title.contains("九价") && (!redisTemplate.opsForSet().isMember(setNineValenceArticleUrlKey, articleUrl));
@@ -164,13 +153,32 @@ public class AccountNineValenceNotice {
         }
     }
 
+    public boolean resultCheck(String cookieKey, String fakeId) {
+        if (INVALID_SESSION.getCode().equals(fakeId)) {
+            log.warn("微信公众号cookie失效，cookie={}", cookie);
+            // cookie失效只发一次邮件
+            if (invalidCount <= 1) {
+                String[] addressee = {"xu-lejun@qq.com"};
+                mailUtil.sendHtmlMail(sendFrom, addressee, "微信公众号cookie失效", "请及时添加cookie");
+            }
+            // 记录cookie失效时间
+            redisTemplate.opsForHash().put(cookieKey, INVALID_TIME_HK, DateUtil.now());
+            invalidCount++;
+            return true;
+        } else if (FREQ_CONTROL.getCode().equals(fakeId)) {
+            log.warn("微信公众号已被限流，cookie={}", cookie);
+            redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
+            redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(cookieKey, CRAWL_COUNT_HK));
+            return true;
+        }
+        return false;
+    }
+
     private void cookieRecord(String cookieKey) {
         // cookie状态记录
         if (!redisTemplate.hasKey(cookieKey)) {
             redisTemplate.opsForHash().put(cookieKey, COOKIE_HK, cookie);
             redisTemplate.opsForHash().put(cookieKey, CREATE_TIME_HK, DateUtil.now());
         }
-        // 记录采集次数
-        redisTemplate.opsForHash().increment(cookieKey, CRAWL_COUNT_HK, 1L);
     }
 }
