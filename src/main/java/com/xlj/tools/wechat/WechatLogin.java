@@ -96,6 +96,7 @@ public class WechatLogin {
                 .timeout(15000).execute().body();
         JSONObject resultJson = JSONUtil.parseObj(result);
         String responseStatus = resultJson.getByPath("base_resp.ret", String.class);
+        log.info("微信公众号响应信息：{}", resultJson.getByPath("base_resp", String.class));
         if (SUCCESS_CODE.getCode().equals(responseStatus)) {
             return resultJson.getByPath("list[0].fakeid", String.class);
         } else if (SYSTEM_ERROR.getCode().equals(responseStatus)) {
