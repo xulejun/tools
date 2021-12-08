@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <!--    导入vue-->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!--    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>-->
+    <title>elementUi学习</title>
+</head>
+<body>
+<div id="app">
+    <button>{{message}}</button>
+</div>
+<div id="vue_det">
+    <h1>site : {{site}}</h1>
+    <h1>url : {{ url}}</h1>
+    <h1>{{details()}}</h1>
+</div>
+<div id="app1">
+    <pre><a v-bind:href="url">菜鸟教程</a></pre>
+</div>
+<script>
+    new Vue({
+        el: '#app1',
+        data: {
+            url: 'http://www.runoob.com'
+        }
+    })
+    new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue.js!'
+        }
+    });
+    new Vue({
+        el: '#vue_det',
+        data: {
+            site: "菜鸟教程",
+            url: "www.runoob.com"
+        },
+        methods: {
+            details: function () {
+                return this.site + " - 学的不仅是技术，更是梦想！";
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

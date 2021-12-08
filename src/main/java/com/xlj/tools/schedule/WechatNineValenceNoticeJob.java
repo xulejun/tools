@@ -77,8 +77,7 @@ public class WechatNineValenceNoticeJob {
                 try {
                     nineValenceNotice.notice();
                 } catch (Exception e) {
-                    log.warn("采集文章失败：", e);
-                    return;
+                    log.warn("公众号采集文章失败：", e);
                 }
                 break;
             }
@@ -104,8 +103,7 @@ public class WechatNineValenceNoticeJob {
                 try {
                     appletMaternityCareNotice.notice();
                 } catch (Exception e) {
-                    log.warn("采集文章失败：", e);
-                    return;
+                    log.warn("小程序采集失败：", e);
                 }
                 break;
             }
