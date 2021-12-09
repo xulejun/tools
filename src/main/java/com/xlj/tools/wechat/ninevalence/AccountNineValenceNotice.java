@@ -3,7 +3,6 @@ package com.xlj.tools.wechat.ninevalence;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONArray;
@@ -154,8 +153,11 @@ public class AccountNineValenceNotice {
     }
 
     public boolean resultCheck(String cookieKey, String fakeId) {
-        if (INVALID_SESSION.getCode().equals(fakeId)) {
-            log.warn("微信公众号cookie失效，cookie={}", cookie);
+        if (FREQ_CONTROL.getCode().equals(fakeId)) {
+            redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
+            redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(cookieKey, CRAWL_COUNT_HK));
+            return true;
+        } else if (INVALID_SESSION.getCode().equals(fakeId)) {
             // cookie失效只发一次邮件
             if (invalidCount <= 1) {
                 String[] addressee = {"xu-lejun@qq.com"};
@@ -164,11 +166,6 @@ public class AccountNineValenceNotice {
             // 记录cookie失效时间
             redisTemplate.opsForHash().put(cookieKey, INVALID_TIME_HK, DateUtil.now());
             invalidCount++;
-            return true;
-        } else if (FREQ_CONTROL.getCode().equals(fakeId)) {
-            log.warn("微信公众号已被限流，cookie={}", cookie);
-            redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
-            redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(cookieKey, CRAWL_COUNT_HK));
             return true;
         }
         return false;

@@ -96,13 +96,17 @@ public class WechatLogin {
                 .timeout(15000).execute().body();
         JSONObject resultJson = JSONUtil.parseObj(result);
         String responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-        log.info("微信公众号响应信息：{}", resultJson.getByPath("base_resp", String.class));
         if (SUCCESS_CODE.getCode().equals(responseStatus)) {
             return resultJson.getByPath("list[0].fakeid", String.class);
-        } else if (SYSTEM_ERROR.getCode().equals(responseStatus)) {
-            return SYSTEM_ERROR.getCode();
+        } else if (FREQ_CONTROL.getCode().equals(responseStatus)) {
+            log.warn("{}，响应体={}", FREQ_CONTROL.getMsg(), resultJson.getByPath("base_resp", String.class));
+            return FREQ_CONTROL.getCode();
         } else if (INVALID_SESSION.getCode().equals(responseStatus)) {
+            log.warn("{}，响应体={}", INVALID_SESSION.getMsg(), resultJson.getByPath("base_resp", String.class));
             return INVALID_SESSION.getCode();
+        } else if (SYSTEM_ERROR.getCode().equals(responseStatus)) {
+            log.warn("{}，响应体={}", SYSTEM_ERROR.getMsg(), resultJson.getByPath("base_resp", String.class));
+            return SYSTEM_ERROR.getCode();
         } else {
             throw new CookieExpiredException("result=" + result + "\n，cookie=" + cookies);
         }
