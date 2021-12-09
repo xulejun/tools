@@ -60,7 +60,7 @@ public class WechatNineValenceNoticeJob {
     }
 
     @Scheduled(fixedDelay = 1000)
-    public void nineValenceTest() throws Exception {
+    public void accountArticleNotice() throws Exception {
         DateTime dateTime = new DateTime();
         String dateStr = dateTime.toString();
         // 取出年月日 yyyy-MM-dd

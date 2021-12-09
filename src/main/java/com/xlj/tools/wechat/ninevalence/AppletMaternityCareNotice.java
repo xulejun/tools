@@ -1,5 +1,6 @@
 package com.xlj.tools.wechat.ninevalence;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONArray;
@@ -56,6 +57,10 @@ public class AppletMaternityCareNotice {
         HttpResponse response = HttpRequest.post(MATERNITY_CARE_APPLET_URL).body(MATERNITY_CARE_REQUEST_BODY).timeout(15000).execute();
         // 数据组装
         Object dataList = new JSONObject(response.body()).getByPath("result.dataList");
+        if (ObjectUtil.isEmpty(dataList)) {
+            log.warn("小程序请求响应为null，response={}", response.body());
+            return;
+        }
         List<MaternityCareAppletInfoDataList> appletInfoDataLists = new JSONArray(dataList).toList(MaternityCareAppletInfoDataList.class);
         // 只获取最新的数据
         MaternityCareAppletInfoDataList infoDataList = appletInfoDataLists.get(appletInfoDataLists.size() - 1);
