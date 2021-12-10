@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.xml.ws.http.HTTPException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -102,6 +103,12 @@ public class WechatNineValenceNoticeJob {
             if (!dateTime.isIn(startTime, endTime)) {
                 try {
                     appletMaternityCareNotice.notice();
+                } catch (HTTPException e) {
+                    if (e.getMessage().contains("Read timed out")) {
+                        log.warn("小程序请求超时，等待重试");
+                    } else {
+                        log.warn("小程序请求异常：", e);
+                    }
                 } catch (Exception e) {
                     log.warn("小程序采集失败：", e);
                 }
