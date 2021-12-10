@@ -2,6 +2,7 @@ package com.xlj.tools.schedule;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.http.HttpException;
 import com.google.common.collect.Maps;
 import com.xlj.tools.wechat.ninevalence.AccountNineValenceNotice;
 import com.xlj.tools.wechat.ninevalence.AppletMaternityCareNotice;
@@ -11,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.xml.ws.http.HTTPException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -103,7 +103,7 @@ public class WechatNineValenceNoticeJob {
             if (!dateTime.isIn(startTime, endTime)) {
                 try {
                     appletMaternityCareNotice.notice();
-                } catch (HTTPException e) {
+                } catch (HttpException e) {
                     if (e.getMessage().contains("Read timed out")) {
                         log.warn("小程序请求超时，等待重试");
                     } else {
