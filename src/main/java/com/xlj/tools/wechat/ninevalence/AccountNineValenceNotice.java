@@ -108,7 +108,7 @@ public class AccountNineValenceNotice {
                 }
                 articleJsonArray = resultJson.getByPath("app_msg_list", JSONArray.class);
                 if (CollUtil.isEmpty(articleJsonArray)) {
-                    log.warn("文章采集列表为空，{}", articleJsonArray);
+                    log.warn("文章采集列表为空，{}", resultJson);
                     return;
                 }
             } catch (CookieExpiredException e) {
