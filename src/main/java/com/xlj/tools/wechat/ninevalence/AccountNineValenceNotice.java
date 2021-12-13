@@ -85,12 +85,8 @@ public class AccountNineValenceNotice {
                 // 登录信息
                 String token = WechatLogin.getToken(cookie);
                 String fakeId = WechatLogin.getFakeId(cookie, queryAccount, token);
-                // 结果校验
-                if (resultCheck(cookieKey, fakeId)) {
-                    return;
-                }
-                // 采集文章
-                int pos = 0;    // 访问列表参数
+                // 访问列表参数
+                int pos = 0;
                 // 采集地址列表页
                 String listUrl = String.format(APPMSGURL, pos, fakeId, token);
                 // 请求referer
@@ -102,7 +98,7 @@ public class AccountNineValenceNotice {
                         .execute().body();
                 JSONObject resultJson = JSONUtil.parseObj(result);
                 responseStatus = resultJson.getByPath("base_resp.ret", String.class);
-                // 二次结果校验
+                // 结果校验
                 if (resultCheck(cookieKey, responseStatus)) {
                     return;
                 }
@@ -152,12 +148,14 @@ public class AccountNineValenceNotice {
         }
     }
 
-    public boolean resultCheck(String cookieKey, String fakeId) {
-        if (FREQ_CONTROL.getCode().equals(fakeId)) {
+    public boolean resultCheck(String cookieKey, String response) {
+        if (FREQ_CONTROL.getCode().equals(response)) {
+            log.warn(FREQ_CONTROL.getMsg());
             redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_TIME_HK, DateUtil.now());
             redisTemplate.opsForHash().putIfAbsent(cookieKey, LIMIT_CRAWL_COUNT_HK, redisTemplate.opsForHash().get(cookieKey, CRAWL_COUNT_HK));
             return true;
-        } else if (INVALID_SESSION.getCode().equals(fakeId)) {
+        } else if (INVALID_SESSION.getCode().equals(response)) {
+            log.warn(INVALID_SESSION.getMsg());
             // cookie失效只发一次邮件
             if (invalidCount <= 1) {
                 String[] addressee = {"xu-lejun@qq.com"};
