@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,7 @@ public class WechatNineValenceNoticeJob {
     static {
         timeRange.put("07:55:00", "08:01:00");
         timeRange.put("10:55:00", "11:01:00");
-        timeRange.put("11:59:00", "12:20:00");
+        timeRange.put("11:59:00", "12:10:00");
         timeRange.put("12:25:00", "12:31:00");
         timeRange.put("12:55:00", "13:01:00");
         timeRange.put("13:55:00", "14:01:00");
@@ -56,8 +57,7 @@ public class WechatNineValenceNoticeJob {
         timeRange.put("18:55:00", "19:01:00");
         timeRange.put("19:55:00", "20:01:00");
         timeRange.put("21:55:00", "22:01:00");
-        appletTimeRange.put("23:00:00", "24:00:00");
-        appletTimeRange.put("00:00:00", "08:00:00");
+        appletTimeRange.put("23:00:00", "08:00:00");
     }
 
     @Scheduled(fixedDelay = 1000)
@@ -95,10 +95,10 @@ public class WechatNineValenceNoticeJob {
         for (String start : appletTimeRange.keySet()) {
             String end = appletTimeRange.get(start);
             String startTimeStr = date.concat(start);
-            String endTimeStr = date.concat(end);
+            String endTimeStr = LocalDate.now().plusDays(1).toString().concat(" " + end);
             Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
             Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
-//            log.info("2开始时间={}，结束时间={}", startTimeStr, endTimeStr);
+            log.info("小程序采集：当前时间={},开始时间={}，结束时间={}", dateTime, startTime, endTime);
             // 处于策略范围内，则采集
             if (!dateTime.isIn(startTime, endTime)) {
                 try {
