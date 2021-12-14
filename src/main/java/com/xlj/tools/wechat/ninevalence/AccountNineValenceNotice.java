@@ -108,7 +108,9 @@ public class AccountNineValenceNotice {
                     return;
                 }
             } catch (CookieExpiredException e) {
-                log.warn("获取公众号fakeId异常：{}", e.getMessage());
+                if (!resultCheck(cookieKey, new JSONObject(e.getMessage()).getByPath("base_resp.ret").toString())) {
+                    log.warn("获取公众号fakeId异常：{}", e.getMessage());
+                }
                 return;
             } catch (Exception e) {
                 log.warn("采集文章失败，queryAccount={}", queryAccount, e);
