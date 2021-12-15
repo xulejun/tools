@@ -104,17 +104,17 @@ public class AccountNineValenceNotice {
                 }
                 articleJsonArray = resultJson.getByPath("app_msg_list", JSONArray.class);
                 if (CollUtil.isEmpty(articleJsonArray)) {
-                    log.warn("文章采集列表为空，{}", resultJson);
-                    return;
+                    log.warn("公众号={}，文章采集列表为空，{}", queryAccount, resultJson);
+                    continue;
                 }
             } catch (CookieExpiredException e) {
                 if (!resultCheck(cookieKey, new JSONObject(e.getMessage()).getByPath("base_resp.ret").toString())) {
                     log.warn("获取公众号fakeId异常：{}", e.getMessage());
                 }
-                return;
+                continue;
             } catch (Exception e) {
                 log.warn("采集文章失败，queryAccount={}", queryAccount, e);
-                return;
+                continue;
             }
             // 数据处理
             dealData(articleJsonArray);
