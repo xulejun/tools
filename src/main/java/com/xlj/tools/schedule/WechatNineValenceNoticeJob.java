@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +56,7 @@ public class WechatNineValenceNoticeJob {
         timeRange.put("18:55:00", "19:01:00");
         timeRange.put("19:55:00", "20:01:00");
         timeRange.put("21:55:00", "22:01:00");
-        appletTimeRange.put("23:00:00", "08:00:00");
+        appletTimeRange.put("08:00:00", "23:00:00");
     }
 
     @Scheduled(fixedDelay = 1000)
@@ -72,7 +71,6 @@ public class WechatNineValenceNoticeJob {
             String endTimeStr = date.concat(end);
             Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
             Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
-//            log.info("1开始时间={}，结束时间={}", startTimeStr, endTimeStr);
             // 处于策略范围内，则采集
             if (dateTime.isIn(startTime, endTime)) {
                 try {
@@ -95,12 +93,11 @@ public class WechatNineValenceNoticeJob {
         for (String start : appletTimeRange.keySet()) {
             String end = appletTimeRange.get(start);
             String startTimeStr = date.concat(start);
-            String endTimeStr = LocalDate.now().plusDays(1).toString().concat(" " + end);
+            String endTimeStr = date.concat(end);
             Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
             Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
-            log.info("小程序采集：当前时间={},开始时间={}，结束时间={}", dateTime, startTime, endTime);
             // 处于策略范围内，则采集
-            if (!dateTime.isIn(startTime, endTime)) {
+            if (dateTime.isIn(startTime, endTime)) {
                 try {
                     appletMaternityCareNotice.notice();
                 } catch (HttpException e) {
@@ -115,6 +112,6 @@ public class WechatNineValenceNoticeJob {
                 break;
             }
         }
-        TimeUnit.MINUTES.sleep(RandomUtil.randomLong(1, 10));
+        TimeUnit.MINUTES.sleep(RandomUtil.randomLong(5, 10));
     }
 }
