@@ -3,6 +3,7 @@ package com.xlj.tools.crawler;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.xlj.tools.ToolsApplication;
+import com.xlj.tools.schedule.WechatNineValenceNoticeJob;
 import com.xlj.tools.wechat.ninevalence.AppletMaternityCareNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -25,9 +26,18 @@ public class AppletMaternityCareNoticeTest {
     @Autowired
     private AppletMaternityCareNotice appletMaternityCareNotice;
 
+    @Autowired
+    WechatNineValenceNoticeJob job;
+
     @Test
     public void testRequest() {
         // 发送请求
         appletMaternityCareNotice.notice();
+    }
+
+    @Test
+    public void testAppletJob() throws Exception {
+        // 发送请求
+        job.maternityCareAppletNotice();
     }
 }

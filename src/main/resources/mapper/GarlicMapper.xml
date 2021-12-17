@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlj.tools.dao.GarlicDao">
+
+    <resultMap id="BaseResultMap" type="com.xlj.tools.bean.Garlic">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="detailUrl" column="detailUrl" jdbcType="VARCHAR"/>
+            <result property="articleTime" column="article_time" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="crawlerTime" column="crawler_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,detailUrl,
+        article_time,price,crawler_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from garlic
+        where  id = #{id,jdbcType=INTEGER} 
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from garlic
+        where  id = #{id,jdbcType=INTEGER} 
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.xlj.tools.bean.Garlic" useGeneratedKeys="true">
+        insert into garlic
+        ( id,title,detailUrl
+        ,article_time,price,crawler_time
+        )
+        values (#{id,jdbcType=INTEGER},#{title,jdbcType=VARCHAR},#{detailUrl,jdbcType=VARCHAR}
+        ,#{articleTime,jdbcType=VARCHAR},#{price,jdbcType=DECIMAL},#{crawlerTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.xlj.tools.bean.Garlic" useGeneratedKeys="true">
+        insert into garlic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="title != null">title,</if>
+                <if test="detailUrl != null">detailUrl,</if>
+                <if test="articleTime != null">articleTime,</if>
+                <if test="price != null">price,</if>
+                <if test="crawlerTime != null">crawlerTime,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">id = #{id,jdbcType=INTEGER},</if>
+                <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
+                <if test="detailUrl != null">detailUrl = #{detailUrl,jdbcType=VARCHAR},</if>
+                <if test="articleTime != null">article_time = #{articleTime,jdbcType=VARCHAR},</if>
+                <if test="price != null">price = #{price,jdbcType=DECIMAL},</if>
+                <if test="crawlerTime != null">crawler_time = #{crawlerTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xlj.tools.bean.Garlic">
+        update garlic
+        <set>
+                <if test="title != null">
+                    title = #{title,jdbcType=VARCHAR},
+                </if>
+                <if test="detailUrl != null">
+                    detailUrl = #{detailUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="articleTime != null">
+                    article_time = #{articleTime,jdbcType=VARCHAR},
+                </if>
+                <if test="price != null">
+                    price = #{price,jdbcType=DECIMAL},
+                </if>
+                <if test="crawlerTime != null">
+                    crawler_time = #{crawlerTime,jdbcType=TIMESTAMP},
+                </if>
+        </set>
+        where   id = #{id,jdbcType=INTEGER} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xlj.tools.bean.Garlic">
+        update garlic
+        set 
+            title =  #{title,jdbcType=VARCHAR},
+            detailUrl =  #{detailUrl,jdbcType=VARCHAR},
+            article_time =  #{articleTime,jdbcType=VARCHAR},
+            price =  #{price,jdbcType=DECIMAL},
+            crawler_time =  #{crawlerTime,jdbcType=TIMESTAMP}
+        where   id = #{id,jdbcType=INTEGER} 
+    </update>
+</mapper>

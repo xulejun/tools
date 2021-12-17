@@ -56,31 +56,31 @@ public class AccountNineValenceNoticeTest {
 
     @Test
     public void nineValenceTest() throws Exception {
-        while (true) {
-            DateTime dateTime = new DateTime();
-            String dateStr = dateTime.toString();
-            // 取出年月日 yyyy-MM-dd
-            String date = dateStr.substring(0, dateStr.indexOf(" ") + 1);
-            for (String start : timeRange.keySet()) {
-                String end = timeRange.get(start);
-                String startTimeStr = date.concat(start);
-                String endTimeStr = date.concat(end);
-                Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
-                Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
-//                log.info("开始时间={}，结束时间={}", startTimeStr, endTimeStr);
-                // 处于策略范围内，则采集
-                if (dateTime.isIn(startTime, endTime)) {
+//        while (true) {
+//            DateTime dateTime = new DateTime();
+//            String dateStr = dateTime.toString();
+//            // 取出年月日 yyyy-MM-dd
+//            String date = dateStr.substring(0, dateStr.indexOf(" ") + 1);
+//            for (String start : timeRange.keySet()) {
+//                String end = timeRange.get(start);
+//                String startTimeStr = date.concat(start);
+//                String endTimeStr = date.concat(end);
+//                Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
+//                Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
+////                log.info("开始时间={}，结束时间={}", startTimeStr, endTimeStr);
+//                // 处于策略范围内，则采集
+//                if (dateTime.isIn(startTime, endTime)) {
                     try {
                         nineValenceNotice.notice();
                     } catch (Exception e) {
                         log.warn("采集文章失败：", e);
                         return;
                     }
-                    break;
-                }
-            }
-            TimeUnit.SECONDS.sleep(RandomUtil.randomLong(1, 5));
-        }
+//                    break;
+//                }
+//            }
+//            TimeUnit.SECONDS.sleep(RandomUtil.randomLong(1, 5));
+//        }
     }
 
     /**

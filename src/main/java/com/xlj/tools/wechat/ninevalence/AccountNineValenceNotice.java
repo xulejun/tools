@@ -67,7 +67,8 @@ public class AccountNineValenceNotice {
 
     static {
         queryAccountList.add("公园接种");
-        queryAccountList.add("董家窑接种");
+//        queryAccountList.add("董家窑接种");
+        queryAccountList.add("dongjiayaojiezhong");
         queryAccountList.add("滕王阁街道社区卫生服务中心");
 //        queryAccountList.add("南昌市岱山街道社区卫生服务中心");
 //        queryAccountList.add("蛟桥镇医院");
