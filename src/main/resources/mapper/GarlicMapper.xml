@@ -57,6 +57,12 @@
                 <if test="crawlerTime != null">crawler_time = #{crawlerTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
+    <insert id="replace" parameterType="com.xlj.tools.bean.Garlic">
+        replace into garlic
+        (title,detailUrl,article_time,price,crawler_time)
+        values
+        (#{title,jdbcType=VARCHAR},#{detailUrl,jdbcType=VARCHAR},#{articleTime,jdbcType=VARCHAR},#{price,jdbcType=DECIMAL},#{crawlerTime,jdbcType=TIMESTAMP})
+    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xlj.tools.bean.Garlic">
         update garlic
         <set>

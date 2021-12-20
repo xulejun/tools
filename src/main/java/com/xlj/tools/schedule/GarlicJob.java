@@ -71,7 +71,7 @@ public class GarlicJob {
      */
     public void list() throws InterruptedException {
         Garlic garlic;
-        for (int i = 1; i < 1000; i++) {
+        for (int i = 200; i < 1000; i++) {
             try {
                 String url = "http://www.51garlic.com/jg/list-57-" + i + ".html";
                 log.info("garlic当前采集列表：url={}", url);
@@ -92,7 +92,7 @@ public class GarlicJob {
                 }
             } catch (Exception e) {
                 log.warn("garlic列表采集异常：", e);
-            }finally {
+            } finally {
                 TimeUnit.MINUTES.sleep(RandomUtil.randomLong(1, 5));
             }
         }
@@ -108,10 +108,11 @@ public class GarlicJob {
             String detailBody = HttpRequest.get(garlic.getDetailUrl()).timeout(15000).execute().body();
             String article = Jsoup.parse(detailBody).body().select("#article").html();
             int index = article.indexOf("印尼货：");
+            BigDecimal price = index == -1 ? BigDecimal.valueOf(0) :
+                    BigDecimal.valueOf(Double.parseDouble(article.substring(index + 4, index + 8)));
             // 价格
-            String price = article.substring(index + 4, index + 8);
-            garlic.setPrice(BigDecimal.valueOf(Double.parseDouble(price)));
-            garlicService.insert(garlic);
+            garlic.setPrice(price);
+            garlicService.replace(garlic);
         } catch (Exception e) {
             log.warn("garlic详情采集异常：url={}", garlic.getDetailUrl(), e);
         } finally {

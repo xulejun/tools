@@ -44,4 +44,9 @@ public class GarlicServiceImpl implements GarlicService {
     public int updateByPrimaryKey(Garlic garlic) {
         return garlicDao.updateByPrimaryKeySelective(garlic);
     }
+
+    @Override
+    public int replace(Garlic garlic) {
+        return garlicDao.replace(garlic);
+    }
 }

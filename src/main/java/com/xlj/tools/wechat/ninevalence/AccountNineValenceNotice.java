@@ -112,10 +112,10 @@ public class AccountNineValenceNotice {
                 if (!resultCheck(cookieKey, new JSONObject(e.getMessage()).getByPath("base_resp.ret").toString())) {
                     log.warn("获取公众号fakeId异常：{}", e.getMessage());
                 }
-                continue;
+                break;
             } catch (Exception e) {
                 log.warn("采集文章失败，queryAccount={}", queryAccount, e);
-                continue;
+                break;
             }
             // 数据处理
             dealData(articleJsonArray);

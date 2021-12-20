@@ -20,4 +20,6 @@ public interface GarlicService {
     int updateByPrimaryKeySelective(Garlic record);
 
     int updateByPrimaryKey(Garlic record);
+
+    int replace(Garlic garlic);
 }

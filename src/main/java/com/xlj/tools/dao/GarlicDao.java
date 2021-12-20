@@ -20,6 +20,7 @@ public interface GarlicDao {
 
     int updateByPrimaryKey(Garlic record);
 
+    int replace(Garlic garlic);
 }
 
 

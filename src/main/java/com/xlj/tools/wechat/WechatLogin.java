@@ -99,7 +99,7 @@ public class WechatLogin {
         if (SUCCESS_CODE.getCode().equals(responseStatus)) {
             return resultJson.getByPath("list[0].fakeid", String.class);
         } else {
-            throw new CookieExpiredException("result=" + result);
+            throw new CookieExpiredException(resultJson.toString());
         }
     }
 }
