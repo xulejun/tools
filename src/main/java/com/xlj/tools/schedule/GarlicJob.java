@@ -33,37 +33,25 @@ public class GarlicJob {
     @Autowired
     GarlicService garlicService;
 
-    /**
-     * 采集文章的时间范围
-     */
-    private static Map<String, String> garlicTimeRange = Maps.newHashMap();
-
-    static {
-        garlicTimeRange.put("08:00:00", "23:00:00");
-    }
-
-    @Scheduled(fixedDelay = 1000)     // cron表达式：当前方法执行完毕后，再过1s后执行此方法
+    //    @Scheduled(fixedDelay = 1000)     // cron表达式：当前方法执行完毕后，再过1s后执行此方法
+    @Scheduled(cron = "0 0 12 * * ? ")  // 每天中午12点执行
     public void startJob() throws Exception {
-        DateTime dateTime = new DateTime();
-        String dateStr = dateTime.toString();
-        // 取出年月日 yyyy-MM-dd
-        String date = dateStr.substring(0, dateStr.indexOf(" ") + 1);
-        for (String start : garlicTimeRange.keySet()) {
-            String end = garlicTimeRange.get(start);
-            String startTimeStr = date.concat(start);
-            String endTimeStr = date.concat(end);
-            Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
-            Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
-            // 处于策略范围内，则采集
-            if (dateTime.isIn(startTime, endTime)) {
-                try {
-                    list();
-                } catch (Exception e) {
-                    log.warn("garlic采集异常：", e);
-                }
-                break;
-            }
+//        DateTime dateTime = new DateTime();
+//        String dateStr = dateTime.toString();
+//        // 取出年月日 yyyy-MM-dd
+//        String date = dateStr.substring(0, dateStr.indexOf(" ") + 1);
+//        String startTimeStr = date.concat("08:00:00");
+//        String endTimeStr = date.concat("23:00:00");
+//        Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr);
+//        Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeStr);
+        // 处于策略范围内，则采集
+//        if (dateTime.isIn(startTime, endTime)) {
+        try {
+            list();
+        } catch (Exception e) {
+            log.warn("garlic采集异常：", e);
         }
+//        }
     }
 
     /**
@@ -71,7 +59,7 @@ public class GarlicJob {
      */
     public void list() throws InterruptedException {
         Garlic garlic;
-        for (int i = 200; i < 1000; i++) {
+        for (int i = 1; i < 2; i++) {
             try {
                 String url = "http://www.51garlic.com/jg/list-57-" + i + ".html";
                 log.info("garlic当前采集列表：url={}", url);
