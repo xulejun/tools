@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--    引入样式-->
+    <link rel="shortcut icon" href="#"/>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!--    在element-ui之前导入vue-->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <!--    引入组件库-->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>HTML5集成element-ui</title>
+</head>
+
+<body>
+<div id="app">
+    <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
+        <el-menu-item index="1" style="color: blueviolet;font-size: larger">后台管理系统</el-menu-item>
+        <el-submenu index="2" style="margin-left: 85%;width: 20px">
+            <template slot="title">提莫</template>
+            <el-menu-item index="2-1">个人信息</el-menu-item>
+            <el-menu-item index="2-2">退出</el-menu-item>
+        </el-submenu>
+    </el-menu>
+
+    <el-col :span="2">
+        <el-menu
+                default-active="2"
+                class="el-menu-vertical-demo"
+                style="width: 200px;min-height: calc(100vh - 80px)">
+            <el-submenu index="/manage">
+                <template slot="title">
+                    <i class="el-icon-location"></i>
+                    <span>系统管理</span>
+                </template>
+                <el-menu-item index="/user">用户管理</el-menu-item>
+            </el-submenu>
+            <el-menu-item index="/product">
+                <i class="el-icon-menu"></i>
+                <span slot="title">商品管理</span>
+            </el-menu-item>
+            <el-menu-item index="/order">
+                <i class="el-icon-document"></i>
+                <span slot="title">订单管理</span>
+            </el-menu-item>
+            <el-menu-item index="/content">
+                <i class="el-icon-setting"></i>
+                <span slot="title">内容管理</span>
+            </el-menu-item>
+        </el-menu>
+    </el-col>
+    <div style="margin-left: 200px;padding: 10px">
+        <el-button type="primary" @click="alertHello">{{hello}}</el-button>
+        <el-button @click="getOne">axios请求后台获取数据</el-button>
+        <el-table :data="tableData">
+            <el-table-column prop="id" label="ID"></el-table-column>
+            <el-table-column prop="name" label="姓名"></el-table-column>
+        </el-table>
+    </div>
+</div>
+</body>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                activeIndex: '1',
+                hello: 'hello element-ui',
+                tableData: [],
+                // path: this.$route.path
+            }
+        },
+        methods: {
+            alertHello() {
+                alert("hello");
+            },
+            getOne() {
+                axios.get("/getManyUser").then(res => {
+                    console.log(res.data)
+                    this.tableData = res.data;
+                })
+            },
+        }
+    })
+</script>
+
+</html>

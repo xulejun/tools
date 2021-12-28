@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/11/29
  */
 @Slf4j
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class WechatNineValenceNoticeJob {
     @Autowired
     private AccountNineValenceNotice nineValenceNotice;
