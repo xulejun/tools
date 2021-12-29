@@ -7,14 +7,14 @@
     <resultMap id="BaseResultMap" type="com.xlj.tools.bean.Garlic">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="title" column="title" jdbcType="VARCHAR"/>
-            <result property="detailUrl" column="detailUrl" jdbcType="VARCHAR"/>
+            <result property="detailUrl" column="detail_url" jdbcType="VARCHAR"/>
             <result property="articleTime" column="article_time" jdbcType="VARCHAR"/>
             <result property="price" column="price" jdbcType="DECIMAL"/>
             <result property="crawlerTime" column="crawler_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,title,detailUrl,
+        id,title,detail_url,
         article_time,price,crawler_time
     </sql>
 
@@ -31,7 +31,7 @@
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.xlj.tools.bean.Garlic" useGeneratedKeys="true">
         insert into garlic
-        ( id,title,detailUrl
+        ( id,title,detail_url
         ,article_time,price,crawler_time
         )
         values (#{id,jdbcType=INTEGER},#{title,jdbcType=VARCHAR},#{detailUrl,jdbcType=VARCHAR}
@@ -51,7 +51,7 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
                 <if test="id != null">id = #{id,jdbcType=INTEGER},</if>
                 <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
-                <if test="detailUrl != null">detailUrl = #{detailUrl,jdbcType=VARCHAR},</if>
+                <if test="detailUrl != null">detail_url = #{detailUrl,jdbcType=VARCHAR},</if>
                 <if test="articleTime != null">article_time = #{articleTime,jdbcType=VARCHAR},</if>
                 <if test="price != null">price = #{price,jdbcType=DECIMAL},</if>
                 <if test="crawlerTime != null">crawler_time = #{crawlerTime,jdbcType=TIMESTAMP},</if>
@@ -59,7 +59,7 @@
     </insert>
     <insert id="replace" parameterType="com.xlj.tools.bean.Garlic">
         replace into garlic
-        (title,detailUrl,article_time,price,crawler_time)
+        (title,detail_url,article_time,price,crawler_time)
         values
         (#{title,jdbcType=VARCHAR},#{detailUrl,jdbcType=VARCHAR},#{articleTime,jdbcType=VARCHAR},#{price,jdbcType=DECIMAL},#{crawlerTime,jdbcType=TIMESTAMP})
     </insert>
@@ -70,7 +70,7 @@
                     title = #{title,jdbcType=VARCHAR},
                 </if>
                 <if test="detailUrl != null">
-                    detailUrl = #{detailUrl,jdbcType=VARCHAR},
+                    detail_url = #{detailUrl,jdbcType=VARCHAR},
                 </if>
                 <if test="articleTime != null">
                     article_time = #{articleTime,jdbcType=VARCHAR},
@@ -88,7 +88,7 @@
         update garlic
         set 
             title =  #{title,jdbcType=VARCHAR},
-            detailUrl =  #{detailUrl,jdbcType=VARCHAR},
+            detail_url =  #{detailUrl,jdbcType=VARCHAR},
             article_time =  #{articleTime,jdbcType=VARCHAR},
             price =  #{price,jdbcType=DECIMAL},
             crawler_time =  #{crawlerTime,jdbcType=TIMESTAMP}
