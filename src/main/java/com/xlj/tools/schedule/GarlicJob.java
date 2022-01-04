@@ -27,14 +27,14 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/12/16
  */
 @Slf4j
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class GarlicJob {
     @Autowired
     GarlicService garlicService;
 
-    //    @Scheduled(fixedDelay = 1000)     // cron表达式：当前方法执行完毕后，再过1s后执行此方法
-    @Scheduled(cron = "0 0 12 * * ? ")  // 每天中午12点执行
+        @Scheduled(fixedDelay = 1000)     // cron表达式：当前方法执行完毕后，再过1s后执行此方法
+//    @Scheduled(cron = "0 0 12 * * ? ")  // 每天中午12点执行
     public void startJob() throws Exception {
 //        DateTime dateTime = new DateTime();
 //        String dateStr = dateTime.toString();
@@ -59,7 +59,7 @@ public class GarlicJob {
      */
     public void list() throws InterruptedException {
         Garlic garlic;
-        for (int i = 1; i < 2; i++) {
+        for (int i = 2; i < 3; i++) {
             try {
                 String url = "http://www.51garlic.com/jg/list-57-" + i + ".html";
                 log.info("garlic当前采集列表：url={}", url);
