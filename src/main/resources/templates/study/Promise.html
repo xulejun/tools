@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Promise异步编排</title>
+</head>
+<body>
+
+</body>
+<script>
+    // promise 方法封装
+    function get(url, data) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: url,
+                data: data,
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (err) {
+                    reject(err);
+                }
+            })
+        })
+    }
+
+    // 异步多次请求
+    get("mock/user.json")
+        .then((data) => {
+            console.log("用户查询成功：", data)
+            return get(`mock/user_corse_${data.id}.json`);
+        })
+        .then((data) => {
+            console.log("课程查询成功：", data)
+            get(`mock/corse_score_${data.id}.json`)
+        });
+</script>
+</html>

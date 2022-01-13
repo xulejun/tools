@@ -20,7 +20,7 @@ public class SecretUtil {
     public static void main(String[] args) throws Exception {
         // 原文
         String source = "hello world";
-        // 定义的key，如果使用DES进行加密，密钥必须是8个字节
+        // 定义的key，如果使用DES进行加密，密钥必须是8个字节； 如果使用 AES 进行加密，则需要16个字节
         String key = "12345678";
         // 算法
         String transformation = "DES";
