@@ -18,6 +18,7 @@ import java.util.Objects;
 
 /**
  * spring-session-redis 统一存储
+ * 单点登录
  *
  * @author legend xu
  * @date 2021/9/29
@@ -80,7 +81,7 @@ public class LoginSessionController {
 
         if (Objects.isNull(httpSession.getAttribute("loginUser"))) {
             // 将自身url通过参数进行传递，后续流程实现跳转
-            return "redirect:http://127.0.0.1:8080/session/loginSession" + "?path=employees";
+            return "redirect:http://127.0.0.1:8090/session/loginSession" + "?path=employees";
         } else {
             List<String> list = Lists.newArrayList();
             list.add("张三");
