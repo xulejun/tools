@@ -25,18 +25,23 @@ public class TimeCaculation {
     public static void main(String[] args) throws ParseException {
         weTogether();
 
-        System.out.println("请输入起始时间：");
-        Scanner scanner = new Scanner(System.in);
-        String start = scanner.next();
-
-        // 开始时间字符串
-        try {
-            calculateTime(start);
-        } catch (ParseException e) {
-            System.out.println("请输入yyyy-MM-dd格式");
-            scanner = new Scanner(System.in);
-            start = scanner.next();
-            calculateTime(start);
+        String exit = "";
+        while (!"exit".equals(exit)) {
+            System.out.println("请输入起始时间：");
+            Scanner scanner = new Scanner(System.in);
+            // 输入内容
+            String start = scanner.next();
+            exit = start;
+            if (!"exit".equals(exit)) {
+                try {
+                    calculateTime(start);
+                } catch (ParseException e) {
+                    System.out.println("请输入yyyy-MM-dd格式");
+                    scanner = new Scanner(System.in);
+                    start = scanner.next();
+                    calculateTime(start);
+                }
+            }
         }
     }
 
@@ -85,7 +90,7 @@ public class TimeCaculation {
     /**
      * 计算两个日期范围内的区间
      *
-     * @param start （yyyy-MM-dd）
+     * @param start           （yyyy-MM-dd）
      * @param end（yyyy-MM-dd）
      * @return （yyyy-MM-dd）具体日期 List
      */
