@@ -26,7 +26,8 @@ public class RedissonConfig {
         Config config = new Config();
         // 可以用"rediss://"来启用SSL连接
         config.useSingleServer().setAddress("redis://127.0.0.1:6379");
-
+        // 将初始化连接数的配置改小一点
+        config.useSingleServer().setConnectionMinimumIdleSize(1);
 //         集群模式，最低要求是必须有三个主节点
 //        config.useClusterServers()
 //                // 集群状态扫描间隔时间，单位是毫秒
