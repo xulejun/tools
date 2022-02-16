@@ -17,6 +17,12 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
+        <!--        security-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.5.3</version>
+        </dependency>
         <!--        selenium-->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

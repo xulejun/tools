@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -85,6 +87,15 @@ public class TimeCaculation {
         Date time = calendar.getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(time);
+    }
+
+    /**
+     * @return 当天24点的时间戳
+     */
+    public static long timeStamp() {
+        long second = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(),
+                LocalDateTime.now().plusDays(1).getDayOfMonth(), 0, 0).toEpochSecond(ZoneOffset.of("+8"));
+        return second * 1000;
     }
 
     /**
