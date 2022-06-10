@@ -65,6 +65,12 @@ onchange()函数用法——请输入你的英文名字：<input onchange="f9()"
 </body>
 
 <script>
+    // 页面加载前运行js代码
+    window.onload = function () {
+        var userName = "xiaoming";
+        alert(userName);
+    };
+
     // 回调函数：一种参数形式传递给另一个函数的函数
 
     // cookie操作
