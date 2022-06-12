@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图片上传并展示</title>
+</head>
+<body>
+
+<h1 style="text-align: center">图片展示</h1>
+<div th:each="path : ${paths}" style="display: inline">
+    <img th:src="@{/image/download?(filePath=${path})}" alt="" style="width: 150px; height: 150px">
+</div>
+
+<div style="width:500px;margin:100px auto;text-align: center">
+    <form action="/image/upload" method="post" enctype="multipart/form-data">
+        <!--    accept="image/*"  表示只能选择图片进行上传-->
+        选择图片：<input type="file" name="imgFile" accept="image/*"> <br>
+        <br>
+        <input type="submit" value="上传">
+    </form>
+</div>
+
+</body>
+</html>
