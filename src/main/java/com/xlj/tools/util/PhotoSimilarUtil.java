@@ -53,7 +53,7 @@ public class PhotoSimilarUtil {
      *
      * @throws Exception
      */
-    private static void getPhotoMeta(String path) throws Exception {
+    public static void getPhotoMeta(String path) throws Exception {
         File file = new File(path);
         Metadata metadata = ImageMetadataReader.readMetadata(file);
         for (Directory next : metadata.getDirectories()) {
