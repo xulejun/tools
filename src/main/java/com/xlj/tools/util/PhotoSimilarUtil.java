@@ -59,7 +59,6 @@ public class PhotoSimilarUtil {
         Metadata metadata = ImageMetadataReader.readMetadata(file);
         for (Directory next : metadata.getDirectories()) {
             for (Tag tag : next.getTags()) {
-                tag.getDescription();
                 String format = MessageFormat.format("[{0}]-{1}:{2}", next.getName(), tag.getTagName(), tag.getDescription());
                 System.out.println(format);
             }
