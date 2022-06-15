@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.MessageFormat;
 
 /**
  * 图片相似度比较
@@ -59,7 +60,8 @@ public class PhotoSimilarUtil {
         for (Directory next : metadata.getDirectories()) {
             for (Tag tag : next.getTags()) {
                 tag.getDescription();
-                System.out.println(tag.getTagName() + ":" + tag.getDescription());
+                String format = MessageFormat.format("[{0}]-{1}:{2}", next.getName(), tag.getTagName(), tag.getDescription());
+                System.out.println(format);
             }
         }
     }
