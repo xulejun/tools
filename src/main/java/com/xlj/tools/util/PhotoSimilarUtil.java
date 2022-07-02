@@ -4,13 +4,24 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 图片相似度比较
@@ -19,6 +30,12 @@ import java.text.MessageFormat;
  * @date 2022/6/15
  */
 public class PhotoSimilarUtil {
+    private static Logger logger = LoggerFactory.getLogger(PhotoSimilarUtil.class);
+
+
+    public static OkHttpClient OKHTTPCLIENT = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build();
+
     public static void main(String[] args) throws Exception {
         String path = "D:\\Users\\lejunxu\\Desktop\\picture\\原图.jpg";
         String path1 = "D:\\Users\\lejunxu\\Desktop\\picture\\PS2021.jpg";
@@ -46,6 +63,50 @@ public class PhotoSimilarUtil {
         int diff = diff(chars, chars1);
         // 汉明距离越小，越相似
         System.out.println("两张图片的汉明距离为：" + diff + "（汉明距离越小，越相似）");
+    }
+
+    /**
+     * 通过图片url 获取元数据
+     *
+     * @param imageUrls
+     * @return
+     */
+    public static Map<String, List<String>> getImageMetaDataList(String[] imageUrls) {
+        Map<String, List<String>> imageMetaDataMap = Maps.newHashMap();
+        // 图片url 下载转换成 输入流，获取图片原信息
+        for (int i = 0; i < imageUrls.length; i++) {
+            Request request = new Request.Builder().url(imageUrls[i]).get().build();
+            try (Response response = OKHTTPCLIENT.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    InputStream inputStream = response.body().byteStream();
+                    // 从图片中获取原信息
+                    Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
+                    // 单张图片元数据
+                    for (Directory directory : metadata.getDirectories()) {
+                        for (Tag tag : directory.getTags()) {
+                            String tagName = tag.getTagName();
+                            // 元数据存储
+                            List<String> metaValue = imageMetaDataMap.get(tagName);
+                            if (metaValue == null) {
+                                metaValue = Lists.newArrayList();
+                            }
+                            if (i != metaValue.size()) {
+                                for (int j = 0; j < i - metaValue.size(); j++) {
+                                    metaValue.add(";");
+                                }
+                            }
+                            metaValue.add(tag.getDescription() + ";");
+                            imageMetaDataMap.put(tagName, metaValue);
+                        }
+                    }
+                } else {
+                    logger.warn("图片链接请求失败");
+                }
+            } catch (Exception e) {
+                logger.warn("采集图片元信息异常：", e);
+            }
+        }
+        return imageMetaDataMap;
     }
 
 
