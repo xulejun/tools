@@ -75,6 +75,7 @@ public class PhotoSimilarUtil {
         Map<String, List<String>> imageMetaDataMap = Maps.newHashMap();
         // 图片url 下载转换成 输入流，获取图片原信息
         for (int i = 0; i < imageUrls.length; i++) {
+            System.out.println(imageUrls[i]);
             Request request = new Request.Builder().url(imageUrls[i]).get().build();
             try (Response response = OKHTTPCLIENT.newCall(request).execute()) {
                 if (response.isSuccessful()) {
@@ -84,6 +85,8 @@ public class PhotoSimilarUtil {
                     // 单张图片元数据
                     for (Directory directory : metadata.getDirectories()) {
                         for (Tag tag : directory.getTags()) {
+                            String format = MessageFormat.format("[{0}]-{1}:{2}", directory.getName(), tag.getTagName(), tag.getDescription());
+                            System.out.println(format);
                             String tagName = tag.getTagName();
                             // 元数据存储
                             List<String> metaValue = imageMetaDataMap.get(tagName);
