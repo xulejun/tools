@@ -11,4 +11,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserDao {
     int insertUser(@Param("user") User user);
+
+    User queryByUsername(@Param("username") String username);
 }

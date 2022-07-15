@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringSecurity 登录页面</title>
+</head>
+<body>
+
+<div style="margin:0px auto; width:500px" align="center">
+    <form action="/user/login" method="post">
+        <!--        引入 SpringSecurity 框架，name 中的值固定-->
+        账号: <input name="username" type="text"/> <br/>
+        密码: <input name="password" type="text"/> <br/>
+        <input name="remember-me" type="checkbox"/> 自动登录 <br/>
+        <input type="submit" value="login"/>
+    </form>
+</div>
+
+</body>
+</html>

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @ComponentScan(excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.xlj.tools.mq.*")})   // 扫描包过滤
 //@PropertySource(value = {"classpath:kafka.properties"}, encoding = "UTF-8")     // 导入配置文件，与@Value结合使用，取值
 //@ImportResource(locations = "classpath:kafka.properties")       // 加载配置文件
+//@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)    // springSecurity 开启权限注解
 public class ToolsApplication {
 
     public static void main(String[] args) {

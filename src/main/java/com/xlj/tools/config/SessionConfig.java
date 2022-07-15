@@ -13,7 +13,7 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * @author legend xu
  * @date 2021/9/29
  */
-@Configuration
+//@Configuration
 public class SessionConfig {
 
     /**

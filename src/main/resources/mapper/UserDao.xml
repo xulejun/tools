@@ -6,4 +6,12 @@
             insert into user_info (`name`)
     values (#{user.name})
     </insert>
+
+    <select id="queryByUsername" parameterType="java.lang.String" resultType="com.xlj.tools.bean.User">
+        select
+        *
+        from user
+        where name = #{username,jdbcType=VARCHAR}
+    </select>
+
 </mapper>
