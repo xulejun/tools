@@ -1,7 +1,5 @@
 package com.xlj.tools.leetcode;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.TimeInterval;
 
 import java.util.Arrays;
 
@@ -18,6 +16,7 @@ public class SortAlgorithm {
         SortAlgorithm sortAlgorithm = new SortAlgorithm();
         System.out.println(Arrays.toString(sortAlgorithm.quickSortMain(sourceArray)));
         System.out.println(Arrays.toString(sortAlgorithm.bubbleSort(sourceArray)));
+        System.out.println(Arrays.toString(sortAlgorithm.mergeSort(sourceArray)));
     }
 
     /**
@@ -55,7 +54,7 @@ public class SortAlgorithm {
     }
 
     /**
-     * 快速排序：使用分治法策略来把一个串行分为两个子串行
+     * 快速排序：使用分治法策略来把一个串行分为两个子串行；本质应该算是在冒泡排序的基础上的递归分治法
      * - 平均时间复杂度：O(n log n)；空间复杂度：O(log n)
      * - 步骤：
      * 1.从数列中挑出一个元素，称为 "基准"（pivot）
@@ -104,6 +103,39 @@ public class SortAlgorithm {
      * @return
      */
     public int[] mergeSort(int[] sourceArray) {
-        return null;
+        int[] arr = Arrays.copyOf(sourceArray, sourceArray.length);
+        if (arr.length < 2) {
+            return arr;
+        }
+        int middle = (int) Math.floor(arr.length >> 1);
+
+        int[] left = Arrays.copyOfRange(arr, 0, middle);
+        int[] right = Arrays.copyOfRange(arr, middle, arr.length);
+
+        return merge(mergeSort(left), mergeSort(right));
+    }
+
+    public int[] merge(int[] left, int[] right) {
+        int[] result = new int[left.length + right.length];
+        int i = 0;
+        while (left.length > 0 && right.length > 0) {
+            if (left[0] <= right[0]) {
+                result[i++] = left[0];
+                left = Arrays.copyOfRange(left, 1, left.length);
+            } else {
+                result[i++] = right[0];
+                right = Arrays.copyOfRange(right, 1, right.length);
+            }
+        }
+        while (left.length > 0) {
+            result[i++] = left[0];
+            left = Arrays.copyOfRange(left, 1, left.length);
+        }
+
+        while (right.length > 0) {
+            result[i++] = right[0];
+            right = Arrays.copyOfRange(right, 1, right.length);
+        }
+        return result;
     }
 }
