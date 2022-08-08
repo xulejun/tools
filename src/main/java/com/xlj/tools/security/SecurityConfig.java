@@ -19,9 +19,9 @@ import javax.sql.DataSource;
  * @author legend xu
  * @date 2022/7/15
  */
-//@Slf4j
-//@Configuration
-//@EnableWebSecurity
+@Slf4j
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailService userDetailService;
@@ -74,6 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 // 登录页面设置
                 .loginPage("/security/login")
+//                .usernameParameter("")
+//                .passwordParameter("")
                 // 登录访问路径，与表单提交路径一致
                 .loginProcessingUrl("/user/login")
                 // 登录成功之后跳转路径
@@ -91,8 +93,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/security/sale").hasAnyRole("sale,boss")
                 .anyRequest().authenticated()
                 // 开启自动登录（关闭浏览器后免登录）
-                .and().rememberMe().tokenRepository(persistentTokenRepository())    // 引入对象
-                .tokenValiditySeconds(60)   // token 有效时长
+                // 引入对象
+                .and().rememberMe().tokenRepository(persistentTokenRepository())
+                // token 有效时长
+                .tokenValiditySeconds(60)
                 .userDetailsService(userDetailService)
                 // 关闭 csrf 防护
                 .and().csrf().disable();
