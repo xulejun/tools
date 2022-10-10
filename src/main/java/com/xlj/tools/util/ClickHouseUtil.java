@@ -1,12 +1,14 @@
 package com.xlj.tools.util;
 
 import com.clickhouse.jdbc.ClickHouseDataSource;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -144,6 +146,30 @@ public class ClickHouseUtil {
             return resultSet;
         } catch (SQLException e) {
             throw new SQLException(e);
+        }
+    }
+
+    /**
+     * 分批插入数据
+     */
+    public void batchInsert(){
+        ArrayList<Object> list = Lists.newArrayList();
+        for (int i = 0; i < 105; i++) {
+            list.add("xlj" + i);
+        }
+
+        ArrayList<Object> tempList = Lists.newArrayList();
+        for (int i = 0; i < list.size(); i++) {
+            tempList.add(list.get(i));
+            if (tempList.size() % 20 == 0) {
+                System.out.println("执行插入：" + list.get(i));
+                tempList.clear();
+                continue;
+            }
+            if (i == list.size() - 1) {
+                System.out.println("执行插入：" + list.get(i));
+                tempList.clear();
+            }
         }
     }
 }
