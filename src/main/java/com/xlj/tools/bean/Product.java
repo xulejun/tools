@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
  * 商品
  *
@@ -33,4 +37,8 @@ public class Product {
      * 秒杀随机码
      */
     private String skillCode;
+    /**
+     * 创建时间
+     */
+    private String createTime;
 }
