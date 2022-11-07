@@ -3,6 +3,10 @@ package com.xlj.tools;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.Redisson;
+import org.redisson.RedissonLock;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,11 +29,21 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/7/1
  */
 @Slf4j
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = ToolsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RedisTest {
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @Test
+    public void testLock() throws Exception{
+        RLock lock = redissonClient.getLock("my_lock");
+        lock.lock();
+        TimeUnit.SECONDS.sleep(40);
+    }
 
     @Test
     public void test() {

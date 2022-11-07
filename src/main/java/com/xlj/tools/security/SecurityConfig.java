@@ -20,8 +20,8 @@ import javax.sql.DataSource;
  * @date 2022/7/15
  */
 @Slf4j
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailService userDetailService;
