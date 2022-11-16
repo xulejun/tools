@@ -2,6 +2,7 @@ package com.xlj.tools;
 
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisSentinelPool;
 
@@ -33,24 +34,18 @@ public class JedisTest {
         sentinels.add("127.0.0.1:6390");
         sentinels.add("127.0.0.1:6391");
         // 创建连接池，当master宕机后，哨兵模式自动切换到slave上
-        JedisSentinelPool pool = new JedisSentinelPool(masterName, sentinels, jedisPoolConfig, password);
-        if ("6381".equals(String.valueOf(pool.getCurrentHostMaster().getPort()))) {
-            pool = new JedisSentinelPool(masterName, sentinels, jedisPoolConfig);
-        }
+//        JedisSentinelPool pool = new JedisSentinelPool(masterName, sentinels, jedisPoolConfig, password);
+//        if ("6381".equals(String.valueOf(pool.getCurrentHostMaster().getPort()))) {
+//            pool = new JedisSentinelPool(masterName, sentinels, jedisPoolConfig);
+//        }
+        JedisPool pool = new JedisPool("10.128.188.44", 6379);
         // 获取客户端
-        Jedis jedis = null;
-        try {
-            jedis = pool.getResource();
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set("username", "legendxu");
+            String value = jedis.get("username");
+            System.out.println(value);
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (null != jedis) {
-                pool.close();
-            }
+            System.out.println("jedis异常：" + e);
         }
-        // 执行命令，增、查
-        jedis.set("id", "1009");
-        String value = jedis.get("id");
-        System.out.println(value);
     }
 }
