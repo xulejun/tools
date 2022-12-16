@@ -43,10 +43,20 @@ public class CallableDemo {
         FutureTask futureTask = new FutureTask(new MyThread());
 
         // FutureTask在被多个线程调用时，只会被调用一次
-        new Thread(futureTask,"A").start();
-        new Thread(futureTask,"B").start();
+        new Thread(futureTask, "A").start();
+        new Thread(futureTask, "B").start();
 
-        System.out.println(futureTask.get());
+        // 1. 直接调用 get 方法，非常容易导致阻塞（一旦调用，非要得到计算结果才会中断，不论是否完成）
+        // System.out.println(futureTask.get());
+
+        // 2. 建议使用 isDone 方法，轮询的方式获取计算结果
+        while (true) {
+            if (futureTask.isDone()) {
+                System.out.println("获取到了计算结果：" + futureTask.get());
+            } else {
+                TimeUnit.SECONDS.sleep(1);
+            }
+        }
         System.out.println("计算完成");
     }
 }
