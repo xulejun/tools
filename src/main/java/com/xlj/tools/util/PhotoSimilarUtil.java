@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -37,32 +38,9 @@ public class PhotoSimilarUtil {
             .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build();
 
     public static void main(String[] args) throws Exception {
-        String path = "D:\\Users\\lejunxu\\Desktop\\picture\\原图.jpg";
-        String path1 = "D:\\Users\\lejunxu\\Desktop\\picture\\PS2021.jpg";
+        String[] urls = {"https://dimg04.fx.ctripcorp.com/images/0BF4812000ac3x8w62864.jpg", "https://dimg04.fx.ctripcorp.com/images/0BF6f12000aeg339xC711.jpg"};
 
-        // 获取图片原信息
-//        getPhotoMeta(path);
-
-        // 两种算法进行图片相似度比较
-        // 第一种
-        int[] data = getData(path);
-        int[] data1 = getData(path1);
-        float compare = compare(data, data1);
-        // 高于 70% 几乎可以认为是经过ps的图片
-        if (compare == 0) {
-            System.out.println("无法比较");
-        } else {
-            System.out.println("两张图片的相似度为：" + compare + "%");
-        }
-
-        // 第二种
-        // 计算图片的灰度差值
-        char[] chars = dHash(path);
-        char[] chars1 = dHash(path1);
-        // 计算汉明距离
-        int diff = diff(chars, chars1);
-        // 汉明距离越小，越相似
-        System.out.println("两张图片的汉明距离为：" + diff + "（汉明距离越小，越相似）");
+        getImageMetaDataList(urls);
     }
 
     /**
@@ -73,10 +51,12 @@ public class PhotoSimilarUtil {
      */
     public static Map<String, List<String>> getImageMetaDataList(String[] imageUrls) {
         Map<String, List<String>> imageMetaDataMap = Maps.newHashMap();
+        HashMap<String, String> combinationFeatures = Maps.newHashMap();
+
         // 图片url 下载转换成 输入流，获取图片原信息
         for (int i = 0; i < imageUrls.length; i++) {
             System.out.println(imageUrls[i]);
-            Request request = new Request.Builder().url(imageUrls[i]).get().build();
+            Request request = new Request.Builder().url(imageUrls[i].replace("https","http")).get().build();
             try (Response response = OKHTTPCLIENT.newCall(request).execute()) {
                 if (response.isSuccessful()) {
                     InputStream inputStream = response.body().byteStream();
@@ -85,6 +65,8 @@ public class PhotoSimilarUtil {
                     // 单张图片元数据
                     for (Directory directory : metadata.getDirectories()) {
                         for (Tag tag : directory.getTags()) {
+                            String description = tag.getDescription();
+
                             String format = MessageFormat.format("[{0}]-{1}:{2}", directory.getName(), tag.getTagName(), tag.getDescription());
                             System.out.println(format);
                             String tagName = tag.getTagName();
@@ -100,6 +82,21 @@ public class PhotoSimilarUtil {
                             }
                             metaValue.add(tag.getDescription() + ";");
                             imageMetaDataMap.put(tagName, metaValue);
+
+                            // 紧急处理组合特征值
+                            if ("Image Width".equals(tag.getTagName()) && "1080".equals(description)) {
+                                combinationFeatures.put(tag.getTagName(), description);
+                            } else if ("Image Height".equals(tag.getTagName()) && "2400".equals(description)) {
+                                combinationFeatures.put(tag.getTagName(), description);
+                            } else if ("Color Type".equals(tag.getTagName()) && "True Color with Alpha".equals(description)) {
+                                combinationFeatures.put(tag.getTagName(), description);
+                            } else if ("sRGB Rendering Intent".equals(tag.getTagName()) && "Perceptual".equals(description)) {
+                                combinationFeatures.put(tag.getTagName(), description);
+                            } else if ("Significant Bits".equals(tag.getTagName()) && "8 8 8 8".equals(description)) {
+                                combinationFeatures.put(tag.getTagName(), description);
+                            } else if ("Detected File Type Name".equals(tag.getTagName()) && "PNG".equals(description)) {
+                                combinationFeatures.put(tag.getTagName(), description);
+                            }
                         }
                     }
                 } else {
@@ -109,6 +106,11 @@ public class PhotoSimilarUtil {
                 logger.warn("采集图片元信息异常：", e);
             }
         }
+
+        combinationFeatures.forEach((key, value) -> {
+            System.out.println(key + ":" + value);
+        });
+        System.out.println(combinationFeatures.size());
         return imageMetaDataMap;
     }
 
@@ -160,12 +162,12 @@ public class PhotoSimilarUtil {
     public static int[] getData(String name) {
         try {
             BufferedImage img = ImageIO.read(new File(name));
-            BufferedImage slt = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-            slt.getGraphics().drawImage(img, 0, 0, 100, 100, null);
+//            BufferedImage slt = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+//            slt.getGraphics().drawImage(img, 0, 0, 100, 100, null);
             int[] data = new int[256];
-            for (int x = 0; x < slt.getWidth(); x++) {
-                for (int y = 0; y < slt.getHeight(); y++) {
-                    int rgb = slt.getRGB(x, y);
+            for (int x = 0; x < img.getWidth(); x++) {
+                for (int y = 0; y < img.getHeight(); y++) {
+                    int rgb = img.getRGB(x, y);
                     Color myColor = new Color(rgb);
                     int r = myColor.getRed();
                     int g = myColor.getGreen();
