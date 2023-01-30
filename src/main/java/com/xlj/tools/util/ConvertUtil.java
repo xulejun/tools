@@ -2,6 +2,7 @@ package com.xlj.tools.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,5 +32,21 @@ public class ConvertUtil {
         Map<Object, Object> hashMap = new HashMap<>(properties);
 //        HashMap<String, String> hashMap = new HashMap<>((Map) properties);
         hashMap.keySet().forEach(System.out::println);
+    }
+
+    /**
+     * map 转为 bean 对象
+     */
+    public static <T> T mapToObj(Map source, Class<T> target) throws Exception {
+        Field[] fields = target.getDeclaredFields();
+        T o = target.newInstance();
+        for (Field field : fields) {
+            Object val;
+            if ((val = source.get(field.getName().toLowerCase())) != null) {
+                field.setAccessible(true);
+                field.set(o, val);
+            }
+        }
+        return o;
     }
 }
