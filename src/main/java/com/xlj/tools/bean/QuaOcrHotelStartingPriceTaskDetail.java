@@ -182,4 +182,28 @@ public class QuaOcrHotelStartingPriceTaskDetail {
         this.sharePassword = sharePassword;
     }
 
+    @Override
+    public String toString() {
+        return "QuaOcrHotelStartingPriceTaskDetail{" +
+                "needBuildByCity=" + needBuildByCity +
+                ", buildPath='" + buildPath + '\'' +
+                ", province='" + province + '\'' +
+                ", cityId='" + cityId + '\'' +
+                ", cityName='" + cityName + '\'' +
+                ", hotelId='" + hotelId + '\'' +
+                ", hotelName='" + hotelName + '\'' +
+                ", checkInDate='" + checkInDate + '\'' +
+                ", checkOutDate='" + checkOutDate + '\'' +
+                ", hotelAddress='" + hotelAddress + '\'' +
+                ", shareShortLink='" + shareShortLink + '\'' +
+                ", sharePassword='" + sharePassword + '\'' +
+                ", type='" + type + '\'' +
+                ", resultType='" + resultType + '\'' +
+                ", isundercarriage=" + isundercarriage +
+                ", canBooking=" + canBooking +
+                ", isLinkInvalidate=" + isLinkInvalidate +
+                ", hotelStatusDesc='" + hotelStatusDesc + '\'' +
+                ", laterPay='" + laterPay + '\'' +
+                '}';
+    }
 }

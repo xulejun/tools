@@ -75,4 +75,17 @@ public class Task {
     public void setLevel(String level) {
         this.level = level;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "type=" + type +
+                ", buildTime=" + buildTime +
+                ", id=" + id +
+                ", priority=" + priority +
+                ", taskDetail=" + taskDetail +
+                ", proxy='" + proxy + '\'' +
+                ", level='" + level + '\'' +
+                '}';
+    }
 }

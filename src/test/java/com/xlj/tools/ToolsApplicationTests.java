@@ -1,22 +1,25 @@
 package com.xlj.tools;
 
-import cn.hutool.core.lang.Console;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import cn.hutool.system.SystemUtil;
-import cn.hutool.system.oshi.CpuInfo;
-import cn.hutool.system.oshi.OshiUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.common.collect.Maps;
 import com.xlj.tools.bean.QuaOcrHotelStartingPriceTaskDetail;
 import com.xlj.tools.bean.Task;
-import com.xlj.tools.bean.User;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
+import net.lingala.zip4j.io.outputstream.ZipOutputStream;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 import okhttp3.OkHttpClient;
+import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
+import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,25 +30,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.xerial.snappy.Snappy;
+import org.zeroturnaround.zip.ZipUtil;
 
-import com.sun.management.OperatingSystemMXBean;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.HWDiskStore;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.software.os.OperatingSystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.management.ManagementFactory;
+import java.io.IOException;
+import java.io.PushbackInputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -91,7 +88,13 @@ public class ToolsApplicationTests {
 
     static Kryo kryo;
 
+    static ZipParameters zip4jParameters;
+
     static {
+        zip4jParameters = new ZipParameters();
+        zip4jParameters.setFileNameInZip("test");
+        zip4jParameters.setCompressionMethod(CompressionMethod.DEFLATE); // 压缩方式
+        zip4jParameters.setCompressionLevel(CompressionLevel.ULTRA); // 压缩级别
         kryo = new Kryo();
         kryo.register(Task.class);
         kryo.register(QuaOcrHotelStartingPriceTaskDetail.class);
@@ -117,6 +120,9 @@ public class ToolsApplicationTests {
                 "        \"hotelAddress\": \"祖冲之路1136号 ，近金科路\",\n" +
                 "        \"type\": \"QuaOcrHotelStartingPriceTaskDetail\",\n" +
                 "        \"resultType\": \"QuaOcrHotelStartingPriceResultDetail\",\n" +
+//                "        \"shareShortLink\": \"qconfig.ctripcorp.com/webapp/page/index.html#/qconfig/null/uat:?groupName=null\",\n" +
+//                "        \"sharePassword\": \"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678900" +
+//                "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\",\n" +
                 "        \"isundercarriage\": 0,\n" +
                 "        \"canBooking\": 1,\n" +
                 "        \"isLinkInvalidate\": -1,\n" +
@@ -125,40 +131,203 @@ public class ToolsApplicationTests {
                 "    },\n" +
                 "    \"level\": \"P0\"\n" +
                 "}";
-        System.out.println(sourceData);
-        logger.info("String长度：{}，占用内存大小：{}", sourceData.length(), ClassLayout.parseInstance(sourceData).instanceSize());
-        logger.info("String ：{}", ClassLayout.parseInstance(sourceData).toPrintable());
-        byte[] bytes = sourceData.getBytes(StandardCharsets.UTF_8);
-        logger.info("bytes 长度：{}，占用内存大小：{}", bytes.length, ClassLayout.parseInstance(bytes).instanceSize());
-        logger.info("bytes ：{}", ClassLayout.parseInstance(sourceData).toPrintable());
+
+        // logger.info("String 大小：{}", sourceData.length());
+        // logger.info("String 转 bytes 大小：{}", bytes.length);
 
         Task task = JSONUtil.toBean(sourceData, Task.class);
-        logger.info("初始对象大小：{}", ClassLayout.parseInstance(sourceData).toPrintable());
-
-        byte[] data = task.toString().getBytes();
-        System.out.println(data);
-        logger.info("对象转bytes：{}", ClassLayout.parseInstance(sourceData.getBytes()).toPrintable());
-
-        JSONObject fastJson = (JSONObject) JSON.toJSON(task);
-        byte[] fastJsonBytes = fastJson.toString().getBytes();
-        logger.info("对象转 fastJsonBytes：{}，对象大小：{}", new String(fastJsonBytes), ClassLayout.parseInstance(fastJsonBytes).instanceSize());
+        byte[] bytes = task.toString().getBytes();
+        logger.info("对象的 bytes 大小：{}", bytes.length);
+        JSONObject json = (JSONObject) JSON.toJSON(task);
+        logger.info("对象转 Json 后的大小：{}", json.toString().getBytes().length);
+        logger.info("转成 Json 后再 gzip 压缩后的大小：{}", gzipCompress(json.toString().getBytes()).length);
 
         byte[] serialize = serialize(task);
-        logger.info("kryo序列化后：{}，{}", new String(serialize), ClassLayout.parseInstance(serialize).instanceSize());
-
-        byte[] compress = gzipCompress(data);
-        logger.info("kryo序列化后压缩String：{}，压缩后大小：{}", new String(compress), ClassLayout.parseInstance(compress).instanceSize());
-
+        logger.info("kryo 序列化后的大小：{}", serialize.length);
         Object object = deserialize(serialize, Task.class);
-        logger.info("kryo反序列化后：{}，{}", object, ClassLayout.parseInstance(object.toString().getBytes()).instanceSize());
+        logger.info("kryo 反序列化后的大小：{}", object.toString().getBytes().length);
 
+        byte[] compress = gzipCompress(bytes);
+        logger.info("gzip 压缩后的大小：{}", compress.length);
         byte[] decompress = gzipDecompress(compress);
-        logger.info("解压后String：{}，解压后大小：{}", new String(decompress), ClassLayout.parseInstance(decompress).instanceSize());
+        logger.info("gzip 解压后的大小：{}", decompress.length);
+
+        byte[] zipCompress = zip4jCompress(bytes);
+        logger.info("zip4j 压缩后的大小：{}", zipCompress.length);
+        byte[] zipDecompress = zip4jDecompress(zipCompress);
+        logger.info("zip4j 解压后的大小：{}", zipDecompress.length);
+
+        byte[] snappyCompress = snappyCompress(bytes);
+        logger.info("snappy 压缩后的大小：{}", snappyCompress.length);
+        byte[] snappyDecompress = snappyDecompress(snappyCompress);
+        logger.info("snappy 解压后的大小：{}", snappyDecompress.length);
+
+        byte[] commonsCompress = commonsCompress(bytes);
+        logger.info("commonsCompress 压缩后的大小：{}", commonsCompress.length);
+        byte[] commonsDecompress = commonsDecompress(commonsCompress);
+        logger.info("commonsCompress 解压后的大小：{}", commonsDecompress.length);
+
+        byte[] jzLibCompress = jzLibCompress(bytes);
+        logger.info("jzLibCompress 压缩后的大小：{}", jzLibCompress.length);
+        byte[] jzLibDecompress = jzLibDecompress(jzLibCompress);
+        logger.info("commonsCompress 解压后的大小：{}", jzLibDecompress.length);
+
 
     }
 
     /**
-     * 文本数据gzip压缩
+     * 文本数据 jzlib 压缩
+     */
+    public static byte[] jzLibCompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (GZIPOutputStream outputStream = new GZIPOutputStream(byteArrayOutputStream);) {
+            outputStream.write(data);
+            outputStream.flush();
+            outputStream.finish();
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 文本数据 jzlib 解压
+     *
+     * @return
+     */
+    public static byte[] jzLibDecompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = gzipInputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 文本数据 commons-compress 压缩
+     */
+    public static byte[] commonsCompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (ArArchiveOutputStream outputStream = new ArArchiveOutputStream(byteArrayOutputStream);) {
+            outputStream.write(data);
+            outputStream.flush();
+            outputStream.finish();
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 文本数据 commons-compress 解压
+     *
+     * @return
+     */
+    public static byte[] commonsDecompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        try (ZipArchiveInputStream gzipInputStream = new ZipArchiveInputStream(byteArrayInputStream)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = gzipInputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 文本数据 snappy 压缩
+     *
+     * @param data
+     * @return
+     */
+    public static byte[] snappyCompress(byte[] data) throws IOException {
+        return Snappy.compress(data);
+    }
+
+    /**
+     * 文本数据gzip解压
+     *
+     * @return
+     */
+    public static byte[] snappyDecompress(byte[] data) throws IOException {
+        return Snappy.uncompress(data);
+    }
+
+    /**
+     * 文本数据 zip4j 压缩
+     *
+     * @param data
+     * @return
+     */
+    public static byte[] zip4jCompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (ZipOutputStream outputStream = new ZipOutputStream(byteArrayOutputStream)) {
+            outputStream.putNextEntry(zip4jParameters);
+            outputStream.write(data);
+            outputStream.flush();
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 文本数据 zip4j 解压
+     *
+     * @return
+     */
+    public static byte[] zip4jDecompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        try (ZipInputStream inputStream = new ZipInputStream(byteArrayInputStream)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 文本数据 gzip 压缩
      */
     public static byte[] gzipCompress(byte[] data) {
         if (data.length == 0) {
@@ -177,7 +346,7 @@ public class ToolsApplicationTests {
     }
 
     /**
-     * 文本数据gzip解压
+     * 文本数据 gzip 解压
      *
      * @return
      */
