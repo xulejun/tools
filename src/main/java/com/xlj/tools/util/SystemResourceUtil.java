@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class SystemResourceUtil {
     public static void main(String[] args) {
+        // jvm 资源信息
         SystemResourceInfo monitor = new SystemResourceInfo();
         monitor.setHostName(SystemUtil.getHostInfo().getName());
         monitor.setIp(SystemUtil.getHostInfo().getAddress());
@@ -35,6 +36,7 @@ public class SystemResourceUtil {
 
         monitor.setJavaRuntimeVersion(SystemUtil.getJavaRuntimeInfo().getVersion());
 
+        // 系统资源信息
         DecimalFormat decimalFormat = new DecimalFormat("0.00%");
         CpuInfo cpuInfo = OshiUtil.getCpuInfo();
         monitor.setCpuUsedRate(decimalFormat.format((100 - cpuInfo.getFree()) / 100));

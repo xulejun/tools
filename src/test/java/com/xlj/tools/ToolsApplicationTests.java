@@ -1,62 +1,53 @@
 package com.xlj.tools;
 
-import cn.hutool.core.text.StrBuilder;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifReader;
-import com.google.common.collect.Lists;
+import cn.hutool.core.lang.Console;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import cn.hutool.system.SystemUtil;
+import cn.hutool.system.oshi.CpuInfo;
+import cn.hutool.system.oshi.OshiUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.xlj.tools.bean.QuaOcrHotelStartingPriceTaskDetail;
+import com.xlj.tools.bean.Task;
 import com.xlj.tools.bean.User;
-import com.xlj.tools.enums.InfoTypeEnum;
-import com.xlj.tools.util.PhotoSimilarUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.Md5Crypt;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjdk.jol.info.ClassLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.mail.MailSender;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisMonitor;
-import redis.clients.jedis.JedisPool;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import com.sun.management.OperatingSystemMXBean;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HWDiskStore;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 @Slf4j
 @SpringBootTest
@@ -67,10 +58,9 @@ public class ToolsApplicationTests {
     public static OkHttpClient OKHTTPCLIENT = new OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build();
 
+
     @Autowired
     RedisTemplate redisTemplate;
-
-    private int a = 0;
 
     @Test
     public void methodTest() throws Exception {
@@ -99,67 +89,147 @@ public class ToolsApplicationTests {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        String urls = " https://dimg04.fx.ctripcorp.com/images/0BF6l120009nllg5p1214.jpg,https://dimg04.fx.ctripcorp.com/images/0BF1m120009nlluwb7809.jpg";
-        String[] imageUrls = urls.replace("https:", "http:").split(",");
-        PhotoSimilarUtil.getImageMetaDataList(imageUrls);
+    static Kryo kryo;
+
+    static {
+        kryo = new Kryo();
+        kryo.register(Task.class);
+        kryo.register(QuaOcrHotelStartingPriceTaskDetail.class);
     }
 
+    public static void main(String[] ars) throws Exception {
 
-    public void hello() throws InterruptedException {
-        synchronized (this) {
-            System.out.println(Thread.currentThread().getName() + "：开始执行");
-//            TimeUnit.SECONDS.sleep(2);
-            System.out.println(Thread.currentThread().getName() + "：执行结束");
+        String sourceData = "{\n" +
+                "    \"type\": 2001011,\n" +
+                "    \"buildTime\": 1678150800000,\n" +
+                "    \"id\": 2,\n" +
+                "    \"priority\": 10,\n" +
+                "    \"taskDetail\": {\n" +
+                "        \"needBuildByCity\": true,\n" +
+                "        \"buildPath\": \"city\",\n" +
+                "        \"province\": \"上海\",\n" +
+                "        \"cityId\": \"310100\",\n" +
+                "        \"cityName\": \"上海市\",\n" +
+                "        \"hotelId\": \"50974020\",\n" +
+                "        \"hotelName\": \"上海长荣桂冠酒店\",\n" +
+                "        \"checkInDate\": \"2023-03-07\",\n" +
+                "        \"checkOutDate\": \"2023-03-08\",\n" +
+                "        \"hotelAddress\": \"祖冲之路1136号 ，近金科路\",\n" +
+                "        \"type\": \"QuaOcrHotelStartingPriceTaskDetail\",\n" +
+                "        \"resultType\": \"QuaOcrHotelStartingPriceResultDetail\",\n" +
+                "        \"isundercarriage\": 0,\n" +
+                "        \"canBooking\": 1,\n" +
+                "        \"isLinkInvalidate\": -1,\n" +
+                "        \"hotelStatusDesc\": \"可订\",\n" +
+                "        \"laterPay\": \"true\"\n" +
+                "    },\n" +
+                "    \"level\": \"P0\"\n" +
+                "}";
+        System.out.println(sourceData);
+        logger.info("String长度：{}，占用内存大小：{}", sourceData.length(), ClassLayout.parseInstance(sourceData).instanceSize());
+        logger.info("String ：{}", ClassLayout.parseInstance(sourceData).toPrintable());
+        byte[] bytes = sourceData.getBytes(StandardCharsets.UTF_8);
+        logger.info("bytes 长度：{}，占用内存大小：{}", bytes.length, ClassLayout.parseInstance(bytes).instanceSize());
+        logger.info("bytes ：{}", ClassLayout.parseInstance(sourceData).toPrintable());
+
+        Task task = JSONUtil.toBean(sourceData, Task.class);
+        logger.info("初始对象大小：{}", ClassLayout.parseInstance(sourceData).toPrintable());
+
+        byte[] data = task.toString().getBytes();
+        System.out.println(data);
+        logger.info("对象转bytes：{}", ClassLayout.parseInstance(sourceData.getBytes()).toPrintable());
+
+        JSONObject fastJson = (JSONObject) JSON.toJSON(task);
+        byte[] fastJsonBytes = fastJson.toString().getBytes();
+        logger.info("对象转 fastJsonBytes：{}，对象大小：{}", new String(fastJsonBytes), ClassLayout.parseInstance(fastJsonBytes).instanceSize());
+
+        byte[] serialize = serialize(task);
+        logger.info("kryo序列化后：{}，{}", new String(serialize), ClassLayout.parseInstance(serialize).instanceSize());
+
+        byte[] compress = gzipCompress(data);
+        logger.info("kryo序列化后压缩String：{}，压缩后大小：{}", new String(compress), ClassLayout.parseInstance(compress).instanceSize());
+
+        Object object = deserialize(serialize, Task.class);
+        logger.info("kryo反序列化后：{}，{}", object, ClassLayout.parseInstance(object.toString().getBytes()).instanceSize());
+
+        byte[] decompress = gzipDecompress(compress);
+        logger.info("解压后String：{}，解压后大小：{}", new String(decompress), ClassLayout.parseInstance(decompress).instanceSize());
+
+    }
+
+    /**
+     * 文本数据gzip压缩
+     */
+    public static byte[] gzipCompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
         }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)) {
+            gzipOutputStream.write(data);
+            gzipOutputStream.flush();
+            gzipOutputStream.finish();
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
-    private static void fileRead(String path) throws IOException {
-        File file = new File(path);
-        ArrayList<String> list = new ArrayList<>();
-//        ArrayList<String> username = new ArrayList<>();
-        HashSet<String> photoType = new HashSet<>();
-        BufferedReader bufferedReader = null;
-        String str = null;
-        bufferedReader = new BufferedReader(new FileReader(file));
-        while ((str = bufferedReader.readLine()) != null) {
-            list.add(str);
-            if (str.contains("- Image Width =") && !str.contains("Exif")) {
-                photoType.add(str.substring(str.indexOf("=") + 1, str.indexOf("=") + 4));
-            }
-            if (str.contains("--------------------------------------------------------------------")) {
-                if (photoType.size() > 1) {
-                    System.out.println("当前行号为：" + list.size());
-//                    System.out.println("用户名为：" + username.get(0));
-                }
-                photoType.clear();
-//                username.clear();
-            }
+    /**
+     * 文本数据gzip解压
+     *
+     * @return
+     */
+    public static byte[] gzipDecompress(byte[] data) {
+        if (data.length == 0) {
+            return null;
         }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = gzipInputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            logger.warn("", e);
+            return null;
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
-    public static void printAllMetadata(InputStream inputStream) {
-        Metadata metadata = null;
-        try {
-            metadata = ImageMetadataReader.readMetadata(inputStream);
-            for (Directory directory : metadata.getDirectories()) {
-                for (Tag tag : directory.getTags()) {
-                    String format = String.format("[%s] - %s = %s", directory.getName(), tag.getTagName(), tag.getDescription());
-                    System.out.println(format);
-                }
-                if (directory.hasErrors()) {
-                    for (String error : directory.getErrors()) {
-                        String format = String.format("ERROR: %s", error);
-                        System.out.println(format);
-                    }
-                }
-            }
-        } catch (ImageProcessingException e) {
-            log.error("图片处理问题", e);
-        } catch (IOException e) {
-            log.error("图片IO问题", e);
-        }
+    /**
+     * kryo 序列化
+     *
+     * @param object
+     * @return
+     */
+    public static byte[] serialize(Object object) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Output output = new Output(bos);
+        // 写入null时会报错
+        kryo.writeObject(output, object);
+        output.close();
+        return bos.toByteArray();
     }
+
+    /**
+     * kryo 反序列化
+     *
+     * @param bytes
+     * @return
+     */
+    public static Object deserialize(byte[] bytes, Class classType) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        Input input = new Input(bis);
+        // 读出null时会报错
+        Object object = kryo.readObject(input, classType);
+        input.close();
+        return object;
+    }
+
 
 }
 
