@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--    POM （Project Object Model 项目对象模型）-->
+    <!--    从 Maven2 开始就固定是 4.0.0，代表当前 pom.xml 所采用的标签结构-->
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <!-- lookup parent from repository -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.3.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.xlj</groupId>
     <artifactId>tools</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <!--    打包方式：jar（java工程） / war（web工程）/ pom（管理其他工程的工程）-->
+    <!--    只有 Web 工程 依赖 java 工程（war 依赖 jar），jar 放在 web 工程下 的 WEB-INF/lib 目录下-->
+    <!--    <packaging>jar</packaging>-->
+
     <name>tools</name>
     <description>Demo project for Spring Boot</description>
+    <!--    maven 中定义的属性值-->
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -229,6 +237,8 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <!-- 依赖范围：默认 compile（对所有有效），test 只对 test目录有效，provided 不进行打包发布到生产（已提供），需要依赖服务器上的 jar，例如 servlet-api-->
+            <!-- 依赖传递： test / provided 都不能进行传递 （本地需要重新 install）-->
             <scope>test</scope>
         </dependency>
         <dependency>
