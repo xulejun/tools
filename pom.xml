@@ -52,6 +52,45 @@
             <artifactId>oshi-core</artifactId>
             <version>5.6.1</version>
         </dependency>
+
+        <!--        版本不一致可能出现为 null，则需要统一版本 -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.oshi</groupId>-->
+        <!--            <artifactId>oshi-core</artifactId>-->
+        <!--            <version>5.6.1</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jna-platform</artifactId>-->
+        <!--                    <groupId>net.java.dev.jna</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jna</artifactId>-->
+        <!--                    <groupId>net.java.dev.jna</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>cn.hutool</groupId>-->
+        <!--            <artifactId>hutool-all</artifactId>-->
+        <!--            <version>5.3.7</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>net.java.dev.jna</groupId>-->
+        <!--            <artifactId>jna</artifactId>-->
+        <!--            <version>5.13.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>net.java.dev.jna</groupId>-->
+        <!--            <artifactId>jna-platform</artifactId>-->
+        <!--            <version>5.13.0</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jna</artifactId>-->
+        <!--                    <groupId>net.java.dev.jna</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
         <!--        从媒体文件读取元数据-->
         <dependency>
             <groupId>com.drewnoakes</groupId>
