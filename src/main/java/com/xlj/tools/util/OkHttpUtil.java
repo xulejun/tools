@@ -2,9 +2,12 @@ package com.xlj.tools.util;
 
 import okhttp3.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * okhttp 的使用
@@ -50,6 +53,9 @@ public class OkHttpUtil {
      * @throws IOException
      */
     public static ResponseBody post(String url, Map<String, String> queryParams, String requestBody) throws IOException {
+        // HttpServletRequest 获取请求体
+        // String data = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
         HttpUrl.Builder builder = HttpUrl.get(url).newBuilder();
         queryParams.forEach(builder::setQueryParameter);
 
@@ -59,6 +65,13 @@ public class OkHttpUtil {
         // Request request = new Request.Builder().url(url).post(new FormBody.Builder().build()).build();
 
         return OKHTTP_CLIENT.newCall(request).execute().body();
+    }
+
+    public static void main(String[] args) throws Exception {
+        String url = "http://vn.cc.ctripcorp.com/vnumber-ui/soa/vnumber/smsQueryByOneNx";
+        String requestBody = "";
+        ResponseBody body = post(url, new HashMap<>(), requestBody);
+        System.out.println(body.string());
     }
 
 }
