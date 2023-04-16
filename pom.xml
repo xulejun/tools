@@ -4,8 +4,23 @@
     <!--    POM （Project Object Model 项目对象模型）-->
     <!--    从 Maven2 开始就固定是 4.0.0，代表当前 pom.xml 所采用的标签结构-->
     <modelVersion>4.0.0</modelVersion>
+    <!--    聚合的配置-->
+    <!--    <modules>-->
+    <!--        <module>xxx.son.model</module>-->
+    <!--    </modules>-->
+
+    <!--    父工程统一管理的依赖信息：即使在父工程配置了对依赖的管理，子工程需要使用具体哪一个依赖还是要明确配置（只是可以不用写版本号，写了采用子工程的）-->
+    <!--    <dependencyManagement>-->
+    <!--        <dependencies>-->
+    <!--            <dependency>-->
+    <!--                <groupId></groupId>-->
+    <!--                <artifactId></artifactId>-->
+    <!--            </dependency>-->
+    <!--        </dependencies>-->
+    <!--    </dependencyManagement>-->
+
+    <!--    parent 标签：给当前工程配置父工程-->
     <parent>
-        <!-- lookup parent from repository -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.3.RELEASE</version>
@@ -281,6 +296,7 @@
         </dependency>
     </dependencies>
 
+    <!--    对构建过程进行自己的定制-->
     <build>
         <plugins>
             <plugin>
