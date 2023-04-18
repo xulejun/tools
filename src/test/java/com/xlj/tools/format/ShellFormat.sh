@@ -3,70 +3,41 @@
 # 2. 在 setting 中找到 terminal 设置，配置 Shell path，路径指定以上 bash.exe ↑
 # 3. 点击 sh 文件右键，Run~
 
-# 周几（0 代表周末）
-date="$(date +%w)"
-# 日期计算
-#today="$(date +%Y-%m-%d --date="-1 day")"
-onwReduce=$[$date-1]
+today="$(date +%Y-%m-%d --date="0 day")"
+yesterday="$(date +%Y-%m-%d --date="-1 day")"
+echo "==============$yesterday========="
 
-# 如果是周末，就统计上一整周的数据
-if (( $onwReduce==0 )); then
-    onwReduce="7"
-    echo $onwReduce
-fi
-
-twoReduce=$[-7-$onwReduce]
-echo $twoReduce
-
-# 计算出两次的具体时间，直接在 unionHql 中无法计算
-oneReduceDate="$(date +%Y-%m-%d --date="-$onwReduce day")"
-echo $oneReduceDate
-twoReduceDate="$(date +%Y-%m-%d --date="$twoReduce day")"
-echo $twoReduceDate
-
-unionHql="select count(a.hotelId) from ods_htl_htlvendorpricemdb.google_hotelinfo a inner join (select hotelId from ods_htl_htlvendorpricemdb.google_hotelinfo where d = '${zdt.addDay(-7).format("yyyy-MM-dd")}' and datachange_lasttime > '$twoReduceDate' and datachange_lasttime < '${zdt.addDay(-7).format("yyyy-MM-dd")}') b on a.hotelId = b.hotelId where a.d = '${zdt.addDay(0).format("yyyy-MM-dd")}' and datachange_lasttime > '$oneReduceDate' and datachange_lasttime < '${zdt.addDay(0).format("yyyy-MM-dd")}'";
-echo $unionHql
-
-# 单个字段查询 Hql
 singleTableHql="";
-# 监控字段的数组
-monitorFieldsArr=(address longitude latitude)
+unionHql="";
 
-function monitorFieldHqlFunc() {
-  singleTableHql="select count(a.$1) from ods_htl_htlvendorpricemdb.google_hotelinfo a inner join (select hotelId,$1 from ods_htl_htlvendorpricemdb.google_hotelinfo where d='${zdt.addDay(-7).format("yyyy-MM-dd")}' and datachange_lasttime > '$twoReduceDate' and datachange_lasttime < '${zdt.addDay(-7).format("yyyy-MM-dd")}') b on a.hotelId = b.hotelId and a.$1 = b.$1 where a.d = '${zdt.addDay(0).format("yyyy-MM-dd")}' and datachange_lasttime > '$oneReduceDate' and datachange_lasttime < '${zdt.addDay(0).format("yyyy-MM-dd")}'";
+function sigleTableHqlFunc() {
+    singleTableHql="select '$2' as table_name, '$4' as field_name, if(nvl(cast((t1.total-t2.change)/t1.total*100 as decimal(10,2)) + 0,null) is null, 0 , cast((t1.total-t2.change)/t1.total*100 as decimal(10,2))) as mom, '$yesterday' as data_date, t1.total as total_count, t2.change as change_count
+    from (select count(a.$3) as total from $1.$2 a inner join (select hotelId from $1.$2 where d = '$yesterday') b on a.$3 = b.$3 where a.d = '$today' and datachange_lasttime > '$yesterday' and datachange_lasttime < '$today') t1,
+    (select count(a.$4) as change from $1.$2 a inner join (select $3,$4 from $1.$2 where d = '$yesterday') b on a.$3 = b.$3 and a.$4 = b.$4 where a.d = '$today' and datachange_lasttime > '$yesterday' and datachange_lasttime < '$today') t2"
 }
 
-# HQL 语句拼接
-for ((i=0; i<${#monitorFieldsArr[@]}; i++))
+# 第一组
+databaseName="ods_htl_htlvendorpricemdb"
+tableNameArr=(google_hotelinfo)
+uniqueField="hotelId"
+fieldArr=(address longitude latitude)
+# 拼接hql
+for ((i=0; i<${#tableNameArr[@]}; i++))
 do
-    monitorFieldHqlFunc "${monitorFieldsArr[i]}"
-    unionHql="${unionHql} union all ${singleTableHql}"
+    for ((j=0; j<${#fieldArr[@]}; j++))
+    do
+        sigleTableHqlFunc "${databaseName}" "${tableNameArr[i]}" "${uniqueField}" "${fieldArr[j]}"
+        if [[ $i -eq $((${#tableNameArr[@]}-1)) ]] && [[ $j -eq $((${#fieldArr[@]}-1)) ]] ; then
+            unionHql=${unionHql}${singleTableHql}
+        else
+            unionHql="${unionHql}${singleTableHql} union all "
+        fi
+    done
 done
-echo ---------"执行的 hql："${unionHql}---------------
 
-# 执行 HQL，并且获取每个字段的值
-fieldTotalCount=`hive -e "set hive.cli.print.header=false;${unionHql}"`
+echo "---------执行的 unionHql ：${unionHql}"
 
-# 将数字转化成字符串
-fieldTotalCountStr="$fieldTotalCount"
-# 将数字转换成数组
-fieldTotalArr=($fieldTotalCountStr)
-echo ----------"数组值："${fieldTotalArr[*]} "数组"${#fieldTotalArr[@]}---------------------
-
-# hotelId 总量
-hotelIdCount=""
-# 计算每个字段的环比并赋值
-for ((i=0; i<${#fieldTotalArr[@]}; i++))
-do
-    if [ $i -eq 0 ];
-    then
-      hotelIdCount=${fieldTotalArr[i]}
-    else
-      # 字段环比值
-      fieldMom=$(awk 'BEGIN{printf "%.2f",'$[$hotelIdCount-${fieldTotalArr[i]}]'*100/'$hotelIdCount'}')%
-      echo -------------"字段环比值："${fieldMom}-----------------------
-      # HQL 执行
-      hive -v -e "insert into table htlcrawleroctopus_db.crawler_data_change_statistic_report partition(d='${zdt.addDay(0).format("yyyy-MM-dd")}')
-      values ('google_hotelinfo','${monitorFieldsArr[$[$i-1]]}','$fieldMom','${zdt.addDay(-1).format("yyyy-MM-dd")}')"
-    fi
-done
+hive -v -e "
+insert overwrite table htlcrawleroctopus_db.crawler_data_change_statistic_report partition(d='${today}')
+SELECT table_name, field_name, mom, data_date, total_count, change_count FROM (${unionHql}) as t
+"
